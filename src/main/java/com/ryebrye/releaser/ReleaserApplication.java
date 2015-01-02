@@ -12,10 +12,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan
 @EnableAutoConfiguration
+@EnableJpaRepositories(basePackages = "com.ryebrye.releaser.historical")
 @ImportResource("classpath:camel-context.xml")
 public class ReleaserApplication {
 
@@ -27,6 +34,16 @@ public class ReleaserApplication {
     @DependsOn("releaserControl")
     public ReleaserManagement releaserManagement() {
         return new ReleaserManagement();
+    }
+
+    @Bean
+    public DataSource embeddedDatabase() {
+        DriverManagerDataSource h2dbDatasource = new DriverManagerDataSource();
+        h2dbDatasource.setDriverClassName("org.h2.Driver");
+        h2dbDatasource.setUrl("jdbc:h2:nioMapped:~/releaserDb");
+        h2dbDatasource.setUsername("sa");
+        h2dbDatasource.setPassword("");
+        return h2dbDatasource;
     }
 
 }

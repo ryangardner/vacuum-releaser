@@ -74,7 +74,7 @@ public class HardwareImpl {
         releaserManagement.broadcastHighSwitchStatus(highFloatSwitch.getState().isHigh());
     }
 
-    @Consume(uri="seda:releaserControl")
+    @Consume(uri="seda:releaserHardwareControl")
     public void handleReleaserControl(String message) {
         log.info("handling releaser control message '{}'", message);
         switch (message) {
