@@ -43,7 +43,7 @@ public class ReleaserApplication {
     public DataSource realDatabase() {
         DriverManagerDataSource h2dbDatasource = new DriverManagerDataSource();
         h2dbDatasource.setDriverClassName("org.h2.Driver");
-        h2dbDatasource.setUrl("jdbc:h2:nioMapped:~/releaserDb");
+        h2dbDatasource.setUrl("jdbc:h2:~/releaserDb");
         h2dbDatasource.setUsername("sa");
         h2dbDatasource.setPassword("");
         return h2dbDatasource;
