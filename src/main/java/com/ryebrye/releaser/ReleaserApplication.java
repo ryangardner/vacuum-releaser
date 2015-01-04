@@ -24,7 +24,7 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan
 @EnableAutoConfiguration
-@EnableJpaRepositories(basePackages = "com.ryebrye.releaser.historical")
+@EnableJpaRepositories(basePackages = {"com.ryebrye.releaser.historical", "org.apache.camel.bam.model"})
 @ImportResource("classpath:camel-context.xml")
 public class ReleaserApplication {
 

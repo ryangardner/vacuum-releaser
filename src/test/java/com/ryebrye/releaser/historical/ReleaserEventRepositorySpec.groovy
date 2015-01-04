@@ -88,5 +88,32 @@ class ReleaserEventRepositorySpec extends Specification {
             releaserEventRepository.deleteAllInBatch()
     }
 
+    def "the most recent completed event can be found"() {
+        setup:
+            ZonedDateTime now = ZonedDateTime.now()
+            releaserEventRepository.save(new ReleaserEvent(startTime: now.minusMinutes(2), endTime: now.minusMinutes(1)))
+            releaserEventRepository.save(new ReleaserEvent(startTime: now.minusDays(1)))
+            releaserEventRepository.save(new ReleaserEvent(startTime: now))
+        when:
+            def event = releaserEventRepository.findMostRecentCompletedEvent()
+        then:
+            event.endTime.isEqual(now.minusMinutes(1))
+            event.startTime.isEqual(now.minusMinutes(2 ))
+        cleanup:
+            releaserEventRepository.deleteAllInBatch()
+    }
+
+    def "a count of completed events can be found using the specification"() {
+        setup:
+            ZonedDateTime now = ZonedDateTime.now()
+            releaserEventRepository.save(new ReleaserEvent(startTime: now.minusMinutes(2), endTime: now.minusMinutes(1)))
+            releaserEventRepository.save(new ReleaserEvent(startTime: now.minusDays(1), endTime:  now))
+            releaserEventRepository.save(new ReleaserEvent(startTime: now))
+        when:
+            int event = releaserEventRepository.count(ReleaserEventSpecifications.completedEvents())
+        then:
+            event == 2
+    }
+
 
 }
