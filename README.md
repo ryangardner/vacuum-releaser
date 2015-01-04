@@ -24,6 +24,7 @@ h2. Simulating the hardware
 To simulate the low float switch becoming active, you can send the following request to your local server:
 
 [http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/true]([http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/true])
+
 Similarly the high switch can be set high by doing:
 [http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/true]([http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/true])
 
