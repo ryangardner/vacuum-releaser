@@ -18,19 +18,19 @@ To run locally, you can run the ```ReleaserApplication``` from inside your ide o
 
 Once it is started, you can navigate to:
 
-[http://localhost:8080/index.html] to see the home page.
+[http://localhost:8080/index.html](http://localhost:8080/index.html) to see the home page.
 
 h2. Simulating the hardware
 To simulate the low float switch becoming active, you can send the following request to your local server:
 
-[http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/true]
+[http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/true]([http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/true])
 Similarly the high switch can be set high by doing:
-[http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/true]
+[http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/true]([http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/true])
 
 To simulate an entire filling / emptying cycle you can run:
-[http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/true]
-[http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/true]
-[http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/false]
-[http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/false]
+[http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/true]([http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/true])
+[http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/true]([http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/true])
+[http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/false]([http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/false])
+[http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/false]([http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/false])
 
 After running a few simulated dumps of the releaser, if you refresh the index page, you should see the values change there.
