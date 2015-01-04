@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 /**
  * Created by ryangardner on 12/30/14.
  */
+@Table(indexes = {@Index(name="start_time_index", columnList = "start_time"), @Index(name="end_time_index", columnList = "end_time")})
 @Entity
 public class ReleaserEvent {
 
@@ -18,13 +19,15 @@ public class ReleaserEvent {
     private long id;
 
     @CreatedDate
+    @Column(name = "start_time")
     @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentZonedDateTime")
     private ZonedDateTime startTime;
 
+    @Column(name = "end_time")
     @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentZonedDateTime")
     private ZonedDateTime endTime;
 
-    public Duration duration() {
+    public Duration getDuration() {
         if (endTime == null) {
             return Duration.between(ZonedDateTime.now(), startTime).abs();
         }
