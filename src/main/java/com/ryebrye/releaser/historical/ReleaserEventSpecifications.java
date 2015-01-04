@@ -1,5 +1,6 @@
 package com.ryebrye.releaser.historical;
 
+import org.hibernate.criterion.Order;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Predicate;
@@ -26,4 +27,5 @@ public class ReleaserEventSpecifications {
             }
         };
     }
+
 }

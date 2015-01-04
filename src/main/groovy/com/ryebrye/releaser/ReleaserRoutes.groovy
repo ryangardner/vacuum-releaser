@@ -3,6 +3,7 @@ package com.ryebrye.releaser
 import com.ryebrye.releaser.historical.ReleaserEvent
 import groovy.transform.CompileStatic
 import org.apache.camel.Consume
+import org.apache.camel.Exchange
 import org.apache.camel.builder.RouteBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -36,9 +37,22 @@ class ReleaserRoutes extends RouteBuilder {
                     .to("direct:releaserClosing")
                 .endChoice()
 
-        from("direct:releaserOpening")
+        from("direct:releaserOpening").routeId("createEvent")
             .setBody{new ReleaserEvent(startTime: ZonedDateTime.now())}
+            .to("direct:saveReleaserEvent")
+
+        from("direct:releaserClosing").routeId("updateEvent")
+            .beanRef("releaserEventRepository", "findMostRecentUnfinishedEvent")
+            .process { Exchange it ->
+                (it.in.body as ReleaserEvent).endTime = ZonedDateTime.now()
+            }
+            .to("direct:saveReleaserEvent")
+
+        // split this part out so we can easily use the BAM monitoring on this
+        from("direct:saveReleaserEvent")
             .beanRef("releaserEventRepository", "save")
             .to("log:loggingReleasing")
+
+
     }
 }
