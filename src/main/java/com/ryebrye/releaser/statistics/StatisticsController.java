@@ -26,8 +26,8 @@ public class StatisticsController {
     public ReleaserStatistics releaserStatistics() {
         ZonedDateTime startDate = ZonedDateTime.now().minusNanos(TimeUnit.MILLISECONDS.toNanos(ManagementFactory.getRuntimeMXBean().getUptime()));
         ReleaserEvent mostRecentEvent = releaserEventRepository.findMostRecentCompletedEvent();
-        int countForToday = (int) releaserEventRepository.count(ReleaserEventSpecifications.completedEvents());
-        int countTotal = (int) releaserEventRepository.count();
+        int countForToday = (int) releaserEventRepository.count(ReleaserEventSpecifications.eventsOfDay(ZonedDateTime.now()));
+        int countTotal = (int) releaserEventRepository.count(ReleaserEventSpecifications.completedEvents());
 
         return new ReleaserStatistics(startDate, mostRecentEvent != null ? mostRecentEvent.getEndTime() : null, countForToday, countTotal);
     }
