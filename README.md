@@ -3,9 +3,12 @@ vacuum-releaser
 
 the brains to a raspberry-pi vacuum releaser
 
-Build this project using maven, then run on raspberry pi with
+Build this project using maven, then run on raspberry pi with the following command line arguments.
 
-    sudo java -XX:MetaspaceSize=32m -Xmx368m -Xms96m -jar -Dspring.profiles.active=raspberryPi,default raspberry-pi-test-0.0.1-SNAPSHOT.jar
+As of right now, you will need to get a twitter api key etc setup so you can pass those in for your account (making the
+twitter part configurable is on the to-do list, but passing the keys at startup is at least usable for now)
+
+    sudo java -XX:MetaspaceSize=32m -Xmx368m -Xms96m -jar -Dspring.profiles.active=raspberryPi,default raspberry-pi-test-0.0.1-SNAPSHOT.jar --twitter.consumerApiKey=[your consumer api key] --twitter.consumerSecret=[your thing] --twitter.accessToken=[your token] --twitter.accessTokenSecret=[your secret]
   
 More instructions to come later.
 
