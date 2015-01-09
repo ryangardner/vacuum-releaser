@@ -5,7 +5,8 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.Duration;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 /**
  * Created by ryangardner on 12/30/14.
@@ -20,16 +21,16 @@ public class ReleaserEvent {
 
     @CreatedDate
     @Column(name = "start_time")
-    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentZonedDateTime")
-    private ZonedDateTime startTime;
+    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
+    private LocalDateTime startTime;
 
     @Column(name = "end_time")
-    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentZonedDateTime")
-    private ZonedDateTime endTime;
+    @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentLocalDateTime")
+    private LocalDateTime endTime;
 
     public Duration getDuration() {
         if (endTime == null) {
-            return Duration.between(ZonedDateTime.now(), startTime).abs();
+            return Duration.between(LocalDateTime.now(), startTime).abs();
         }
         return Duration.between(endTime, startTime).abs();
     }
@@ -42,19 +43,19 @@ public class ReleaserEvent {
         this.id = id;
     }
 
-    public ZonedDateTime getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(ZonedDateTime startTime) {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public ZonedDateTime getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(ZonedDateTime endTime) {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 

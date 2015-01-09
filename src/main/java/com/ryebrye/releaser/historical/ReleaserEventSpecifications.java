@@ -7,7 +7,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @author Ryan Gardner
@@ -15,14 +16,13 @@ import java.time.ZonedDateTime;
  */
 public class ReleaserEventSpecifications {
 
-    public static Specification<ReleaserEvent> eventsOfDay(ZonedDateTime time) {
+    public static Specification<ReleaserEvent> eventsOfDay(LocalDate time) {
         return new Specification<ReleaserEvent>() {
             @Override
             public Predicate toPredicate(Root<ReleaserEvent> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 //query.from(ReleaserEvent.class);
-                Path<ZonedDateTime> releaserDate = root.<ZonedDateTime>get("startTime");
-                ZonedDateTime midnightOfDay = time.withHour(0).withMinute(0).withSecond(0).withNano(0);
-                return cb.and(cb.greaterThanOrEqualTo(releaserDate, midnightOfDay), cb.lessThan(releaserDate, midnightOfDay.plusDays(1).minusNanos(1)));
+                Path<LocalDateTime> releaserDate = root.<LocalDateTime>get("startTime");
+                return cb.and(cb.greaterThanOrEqualTo(releaserDate, time.atStartOfDay()), cb.lessThan(releaserDate, time.atStartOfDay().plusDays(1)));
             }
         };
     }
@@ -32,8 +32,8 @@ public class ReleaserEventSpecifications {
             @Override
             public Predicate toPredicate(Root<ReleaserEvent> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 //query.from(ReleaserEvent.class);
-                Path<ZonedDateTime> startTime = root.<ZonedDateTime>get("startTime");
-                Path<ZonedDateTime> endTime = root.<ZonedDateTime>get("endTime");
+                Path<LocalDateTime> startTime = root.<LocalDateTime>get("startTime");
+                Path<LocalDateTime> endTime = root.<LocalDateTime>get("endTime");
                 return cb.and(cb.isNotNull(startTime), cb.isNotNull(endTime));
             }
         };

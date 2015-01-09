@@ -13,7 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
-import java.time.ZonedDateTime
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * @author Ryan Gardner
@@ -57,19 +58,19 @@ class ReleaserRoutes extends RouteBuilder {
                 .endChoice()
 
         from("direct:releaserOpening").routeId("createEvent")
-                .setBody { new ReleaserEvent(startTime: ZonedDateTime.now()) }
+                .setBody { new ReleaserEvent(startTime: LocalDateTime.now()) }
                 .to("direct:saveReleaserEvent")
 
         from("direct:releaserClosing").routeId("updateEvent")
                 .beanRef("releaserEventRepository", "findMostRecentUnfinishedEvent")
                 .process { Exchange it ->
-            (it.in.body as ReleaserEvent).endTime = ZonedDateTime.now()
+            (it.in.body as ReleaserEvent).endTime = LocalDateTime.now()
         }
         .to("direct:saveReleaserEvent")
                 .to("direct:tweetAboutIt")
 
         from("direct:tweetAboutIt").routeId("tweet")
-                .transform({ Exchange it -> "More sap! That makes ${releaserEventRepository.count(ReleaserEventSpecifications.eventsOfDay(ZonedDateTime.now()))} times for today. [still in testing - not real sap]" })
+                .transform({ Exchange it -> "More sap! That makes ${releaserEventRepository.count(ReleaserEventSpecifications.eventsOfDay(LocalDate.now()))} times for today. [still in testing - not real sap]" })
                 .to("twitter://timeline/user")
 
         // split this part out so we can easily use the BAM monitoring on this
