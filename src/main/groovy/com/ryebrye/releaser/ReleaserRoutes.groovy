@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 import java.time.LocalDate
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 /**
  * @author Ryan Gardner
@@ -58,13 +58,13 @@ class ReleaserRoutes extends RouteBuilder {
                 .endChoice()
 
         from("direct:releaserOpening").routeId("createEvent")
-                .setBody { new ReleaserEvent(startTime: LocalDateTime.now()) }
+                .setBody { new ReleaserEvent(startTime: ZonedDateTime.now()) }
                 .to("direct:saveReleaserEvent")
 
         from("direct:releaserClosing").routeId("updateEvent")
                 .beanRef("releaserEventRepository", "findMostRecentUnfinishedEvent")
                 .process { Exchange it ->
-            (it.in.body as ReleaserEvent).endTime = LocalDateTime.now()
+            (it.in.body as ReleaserEvent).endTime = ZonedDateTime.now()
         }
         .to("direct:saveReleaserEvent")
                 .to("direct:tweetAboutIt")

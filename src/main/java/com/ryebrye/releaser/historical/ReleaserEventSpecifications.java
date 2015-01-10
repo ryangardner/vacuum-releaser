@@ -8,7 +8,8 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 /**
  * @author Ryan Gardner
@@ -21,8 +22,8 @@ public class ReleaserEventSpecifications {
             @Override
             public Predicate toPredicate(Root<ReleaserEvent> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 //query.from(ReleaserEvent.class);
-                Path<LocalDateTime> releaserDate = root.<LocalDateTime>get("startTime");
-                return cb.and(cb.greaterThanOrEqualTo(releaserDate, time.atStartOfDay()), cb.lessThan(releaserDate, time.atStartOfDay().plusDays(1)));
+                Path<ZonedDateTime> releaserDate = root.<ZonedDateTime>get("startTime");
+                return cb.and(cb.greaterThanOrEqualTo(releaserDate, time.atStartOfDay().atZone(ZoneId.systemDefault())), cb.lessThan(releaserDate, time.atStartOfDay().plusDays(1).atZone(ZoneId.systemDefault())));
             }
         };
     }
@@ -32,8 +33,8 @@ public class ReleaserEventSpecifications {
             @Override
             public Predicate toPredicate(Root<ReleaserEvent> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 //query.from(ReleaserEvent.class);
-                Path<LocalDateTime> startTime = root.<LocalDateTime>get("startTime");
-                Path<LocalDateTime> endTime = root.<LocalDateTime>get("endTime");
+                Path<ZonedDateTime> startTime = root.<ZonedDateTime>get("startTime");
+                Path<ZonedDateTime> endTime = root.<ZonedDateTime>get("endTime");
                 return cb.and(cb.isNotNull(startTime), cb.isNotNull(endTime));
             }
         };

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.management.ManagementFactory;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +25,7 @@ public class StatisticsController {
 
     @RequestMapping("/basicStats")
     public ReleaserStatistics releaserStatistics() {
-        LocalDateTime startDate = LocalDateTime.now().minusNanos(TimeUnit.MILLISECONDS.toNanos(ManagementFactory.getRuntimeMXBean().getUptime()));
+        ZonedDateTime startDate = ZonedDateTime.now().minusNanos(TimeUnit.MILLISECONDS.toNanos(ManagementFactory.getRuntimeMXBean().getUptime()));
         ReleaserEvent mostRecentEvent = releaserEventRepository.findMostRecentCompletedEvent();
         int countForToday = (int) releaserEventRepository.count(ReleaserEventSpecifications.eventsOfDay(LocalDate.now()));
         int countTotal = (int) releaserEventRepository.count(ReleaserEventSpecifications.completedEvents());

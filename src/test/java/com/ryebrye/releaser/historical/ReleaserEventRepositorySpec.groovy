@@ -10,7 +10,7 @@ import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.function.Function
 
 /**
@@ -27,7 +27,7 @@ class ReleaserEventRepositorySpec extends Specification {
 
     def "after saving three events, the findAll() method returns 3 elements"() {
         setup:
-            LocalDateTime now = LocalDateTime.now()
+            ZonedDateTime now = ZonedDateTime.now()
             releaserEventRepository.save(new ReleaserEvent(startTime: now.minusMinutes(2)))
             releaserEventRepository.save(new ReleaserEvent(startTime: now.minusMinutes(1)))
             releaserEventRepository.save(new ReleaserEvent(startTime: now))
@@ -41,7 +41,7 @@ class ReleaserEventRepositorySpec extends Specification {
 
     def "the specification query 'eventsOfDay' is able to retrieve events from only a single day"() {
         setup:
-            LocalDateTime now = LocalDateTime.now()
+            ZonedDateTime now = ZonedDateTime.now()
             releaserEventRepository.save(new ReleaserEvent(startTime: now.minusMinutes(2)))
             releaserEventRepository.save(new ReleaserEvent(startTime: now.minusMinutes(1)))
             releaserEventRepository.save(new ReleaserEvent(startTime: now))
@@ -66,7 +66,7 @@ class ReleaserEventRepositorySpec extends Specification {
 
     def "the most recent unfinished query can be retrieved by calling the method on the repository when there is only one without an end time"() {
         setup:
-            LocalDateTime now = LocalDateTime.now()
+            ZonedDateTime now = ZonedDateTime.now()
             releaserEventRepository.save(new ReleaserEvent(startTime: now.minusMinutes(2), endTime: now.minusMinutes(1)))
             releaserEventRepository.save(new ReleaserEvent(startTime: now))
         when:
@@ -80,7 +80,7 @@ class ReleaserEventRepositorySpec extends Specification {
 
     def "the most recent unfinished query only returns one result when there are multiple unfinished events"() {
         setup:
-            LocalDateTime now = LocalDateTime.now()
+            ZonedDateTime now = ZonedDateTime.now()
             releaserEventRepository.save(new ReleaserEvent(startTime: now.minusMinutes(2), endTime: now.minusMinutes(1)))
             releaserEventRepository.save(new ReleaserEvent(startTime: now.minusDays(1)))
             releaserEventRepository.save(new ReleaserEvent(startTime: now))
@@ -99,7 +99,7 @@ class ReleaserEventRepositorySpec extends Specification {
             // 1am EST = 6AM UTC
             Instant fixedInstant = Instant.parse("2014-03-06T06:01:01Z")
             Clock fixedClock = Clock.fixed(fixedInstant, ZoneId.of(ZoneId.SHORT_IDS.get("EST")))
-            LocalDateTime startingDateTime = LocalDateTime.now(fixedClock)
+            ZonedDateTime startingDateTime = ZonedDateTime.now(fixedClock)
             releaserEventRepository.save(new ReleaserEvent(startTime: startingDateTime.minusHours(5), endTime: startingDateTime.plusMinutes(2)))
             releaserEventRepository.save(new ReleaserEvent(startTime: startingDateTime.minusHours(4), endTime: startingDateTime.plusMinutes(2)))
             releaserEventRepository.save(new ReleaserEvent(startTime: startingDateTime.plusMinutes(2), endTime: startingDateTime.plusMinutes(2)))
@@ -121,7 +121,7 @@ class ReleaserEventRepositorySpec extends Specification {
 
     def "the most recent completed event can be found"() {
         setup:
-            LocalDateTime now = LocalDateTime.now()
+            ZonedDateTime now = ZonedDateTime.now()
             releaserEventRepository.save(new ReleaserEvent(startTime: now.minusMinutes(2), endTime: now.minusMinutes(1)))
             releaserEventRepository.save(new ReleaserEvent(startTime: now.minusDays(1)))
             releaserEventRepository.save(new ReleaserEvent(startTime: now))
@@ -136,7 +136,7 @@ class ReleaserEventRepositorySpec extends Specification {
 
     def "a count of completed events can be found using the specification"() {
         setup:
-            LocalDateTime now = LocalDateTime.now()
+            ZonedDateTime now = ZonedDateTime.now()
             releaserEventRepository.save(new ReleaserEvent(startTime: now.minusMinutes(2), endTime: now.minusMinutes(1)))
             releaserEventRepository.save(new ReleaserEvent(startTime: now.minusDays(1), endTime: now))
             releaserEventRepository.save(new ReleaserEvent(startTime: now))

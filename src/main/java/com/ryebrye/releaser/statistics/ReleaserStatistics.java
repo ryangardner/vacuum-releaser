@@ -1,29 +1,29 @@
 package com.ryebrye.releaser.statistics;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * @author Ryan Gardner
  * @date 1/3/15
  */
 public class ReleaserStatistics {
-    private LocalDateTime startDate;
-    private LocalDateTime mostRecentReleaseEvent;
+    private ZonedDateTime startDate;
+    private ZonedDateTime mostRecentReleaseEvent;
     private int countForToday;
     private int countTotal;
 
-    public ReleaserStatistics(LocalDateTime startDate, LocalDateTime mostRecentReleaseEvent, int countForToday, int countTotal) {
+    public ReleaserStatistics(ZonedDateTime startDate, ZonedDateTime mostRecentReleaseEvent, int countForToday, int countTotal) {
         this.startDate = startDate;
         this.mostRecentReleaseEvent = mostRecentReleaseEvent;
         this.countForToday = countForToday;
         this.countTotal = countTotal;
     }
 
-    public LocalDateTime getStartDate() {
+    public ZonedDateTime getStartDate() {
         return startDate;
     }
 
-    public LocalDateTime getMostRecentReleaseEvent() {
+    public ZonedDateTime getMostRecentReleaseEvent() {
         return mostRecentReleaseEvent;
     }
 
