@@ -9,27 +9,12 @@
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/0.8.3/angular-moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.13/angular-ui-router.min.js"></script>
+    <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route.min.js"></script>-->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <script language="javascript">
-        var releaserHome = angular.module('releaserHome', ['angularMoment']);
-
-        releaserHome.controller('StatisticsOverview', function($scope, $http) {
-            $http.get('/basicStats').
-                    success(function (data) {
-                        $scope.releaserStats = data;
-                    });
-        });
-//        releaserHome.controller('homeController', function ($scope) {
-//          $scope.releaserStats = {
-//              'uptime': 1420342309.317,
-//              'mostRecent' : 1420342309.317,
-//              "countForToday": 12,
-//              'countTotal': 27
-//          }
-//        });
-    </script>
+    <script type="text/javascript" src="js/releaser.js"></script>
 </head>
 
 <body>
@@ -52,9 +37,9 @@
                 <!-- Collection of nav links and other content for toggling -->
                 <div id="navbarCollapse" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="#"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                        <li ui-sref-active="active"><a ui-sref="home"><span class="glyphicon glyphicon-home"></span> Home</a></li>
                         <li><a href="#"><span class="glyphicon glyphicon-dashboard"></span> View Data</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-wrench"></span> Settings</a></li>
+                        <li ui-sref-active="active"><a ui-sref="settings"><span class="glyphicon glyphicon-wrench"></span> Settings</a></li>
                     </ul>
                     <!--<ul class="nav navbar-nav navbar-right">-->
                     <!--<li><a href="#">Login</a></li>-->
@@ -65,58 +50,23 @@
     </div>
 </div>
 
-<div class="container">
-    <div class="jumbotron" ng-controller="StatisticsOverview">
-        <h1>Everything is working</h1>
+<div class="container" id="main">
+    <div ui-view></div>
+</div>
 
-        <p>The vacuum releaser is up and running. It was started up <span am-time-ago="releaserStats.startDate"  am-preprocess="unix"></span>.</p>
-
-        <p>The releaser has emptied {{releaserStats.countForToday}} times today, and
-            {{releaserStats.countTotal}} times since the start of the season.</p>
-
-        <p>The most recent release event was <span am-time-ago="releaserStats.mostRecentReleaseEvent"  am-preprocess="unix"></span> </p>
-
-        <p><a href="http://www.tutorialrepublic.com" target="_blank" class="btn btn-success btn-lg">View Detailed
-            Statistics</a></p>
-    </div>
-    <div class="row">
-        <div class="col-sm-6 col-md-4 col-lg-2">
-            <h2>Sap Gathered</h2>
-
-            <p>{{releaserStats.countForToday * 1.2}} gallons</strong> of sap have been collected today. This is
-                <strong>{{releaserStats.countForToday * 1.2 / 100}} gallons per
-                    tap</strong> for the day</p>
-
-            <p><a href="http://www.tutorialrepublic.com/html-tutorial/" target="_blank" class="btn btn-success">View
-                More Data &raquo;</a></p>
-        </div>
-        <div class="col-sm-6 col-md-4 col-lg-2">
-            <h2>Vacuum Is On</h2>
-
-            <p>At the releaser, the vacuum level is measuring <strong>26.5"</strong> currently. The lowest vacuum level
-                of <strong>25.4"</strong> was at 12:03 PM yesterday</p>
-
-            <p><a href="http://www.tutorialrepublic.com/css-tutorial/" target="_blank" class="btn btn-success">View
-                Vacuum History &raquo;</a></p>
-        </div>
-        <div class="clearfix visible-sm-block"></div>
-        <div class="col-sm-6 col-md-4 col-lg-2">
-            <h2>Actively Tweeting</h2>
-
-            <p>The vacuum releaser is actively tweeting its status updates as the twitter user
-                <strong>SomeTwitterUser</strong>.</p>
-
-            <p><a href="http://www.tutorialrepublic.com/twitter-bootstrap-tutorial/" target="_blank"
-                  class="btn btn-success">Adjust Twitter Settings &raquo;</a></p>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-12">
-            <footer>
-                <p>&copy; Copyright 2015 Ryan Gardner</p>
-            </footer>
-        </div>
+<pre>
+  <!-- Here's some values to keep an eye on in the sample in order to understand $state and $stateParams -->
+  $state = {{$state.current.name}}
+  $stateParams = {{$stateParams}}
+  $state full url = {{ $state.$current.url.source }}
+  <!-- $state.$current is not a public api, we are using it to
+       display the full url for learning purposes-->
+</pre>
+<div class="row">
+    <div class="col-sm-12">
+        <footer>
+            <p>&copy; Copyright 2015 Ryan Gardner</p>
+        </footer>
     </div>
 </div>
 
