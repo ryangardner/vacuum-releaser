@@ -17,12 +17,18 @@ var app = angular.module('releaserHome', ['angularMoment', 'ui.router'])
                 url: '/',
                 templateUrl: 'pages/main.html'
             },
+            data = {
+                name: 'data',
+                url: 'data',
+                templateUrl: 'pages/data.html'
+            },
             settings = {
                 name: 'settings',
                 url: 'settings',
                 templateUrl: 'pages/settings.html'
             };
         $stateProvider.state(home);
+        $stateProvider.state(data);
         $stateProvider.state(settings);
     }]);
 
