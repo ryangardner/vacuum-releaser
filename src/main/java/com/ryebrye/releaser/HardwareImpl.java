@@ -56,7 +56,7 @@ public class HardwareImpl {
         releaserActiveLED = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_02, PinState.LOW);
 
         log.info(" Pin 03 -> relay to solenoid valve (when in low state, this should have vacuum go to chamber. when high, atmospheric pressure should go to chamber)");
-        vacuumRelay = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_03, PinState.LOW);
+        vacuumRelay = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_03, PinState.HIGH);
 
         // when the low or high switches change state, have the event listeners delegate to the broadcaster
         // to have it send the message out
@@ -79,13 +79,13 @@ public class HardwareImpl {
         log.info("handling releaser control message '{}'", message);
         switch (message) {
             case "open":
-                log.info("Setting vacuum relay state to HIGH in response to control message");
-                vacuumRelay.high();
+                log.info("Setting vacuum relay state to LOW (open) in response to control message");
+                vacuumRelay.low();
                 releaserActiveLED.high();
                 break;
             case "close":
-                log.info("Setting vacuum relay state to LOW in response to control message");
-                vacuumRelay.low();
+                log.info("Setting vacuum relay state to HIGH (closed) in response to control message");
+                vacuumRelay.high();
                 releaserActiveLED.low();
                 break;
             default:
