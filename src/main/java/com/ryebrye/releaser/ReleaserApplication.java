@@ -1,7 +1,13 @@
 package com.ryebrye.releaser;
 
+import org.h2.mvstore.MVStore;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -13,11 +19,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
 
 @Configuration
 @ComponentScan
+@EnableCaching
 @EnableAutoConfiguration
-@EnableJpaRepositories(basePackages = {"com.ryebrye.releaser.historical", "org.apache.camel.bam.model"})
+@EnableJpaRepositories(basePackages = {"com.ryebrye.releaser.historical", "com.ryebrye.releaser", "org.apache.camel.bam.model"})
 @ImportResource("classpath:camel-context.xml")
 public class ReleaserApplication {
 
@@ -38,6 +46,18 @@ public class ReleaserApplication {
         configurer.setIgnoreUnresolvablePlaceholders(true);
         return configurer;
     }
+
+
+    @Bean
+   	public CacheManager cacheManager() {
+
+   		Cache cache = new ConcurrentMapCache("settingsCache");
+
+   		SimpleCacheManager manager = new SimpleCacheManager();
+   		manager.setCaches(Arrays.asList(cache));
+
+   		return manager;
+   	}
 
     @Profile("!test")
     @Bean
