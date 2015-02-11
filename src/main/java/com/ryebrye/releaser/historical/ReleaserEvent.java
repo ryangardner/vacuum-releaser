@@ -28,6 +28,9 @@ public class ReleaserEvent {
     @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentZonedDateTime")
     private ZonedDateTime endTime;
 
+    @Column(name="sap_qty_gal")
+    private Double sapQuantity;
+
     public Duration getDuration() {
         if (endTime == null) {
             return Duration.between(ZonedDateTime.now(), startTime).abs();
@@ -59,6 +62,13 @@ public class ReleaserEvent {
         this.endTime = endTime;
     }
 
+    public Double getSapQuantity() {
+        return sapQuantity;
+    }
+
+    public void setSapQuantity(Double sapQuantity) {
+        this.sapQuantity = sapQuantity;
+    }
 
     @Override
     public String toString() {
@@ -66,6 +76,7 @@ public class ReleaserEvent {
                 .add("id", id)
                 .add("startTime", startTime)
                 .add("endTime", endTime)
+                .add("sapQty", sapQuantity)
                 .toString();
     }
 
@@ -86,7 +97,10 @@ public class ReleaserEvent {
         if (endTime != null ? !endTime.equals(that.endTime) : that.endTime != null) {
             return false;
         }
-        if (startTime != null ? !startTime.equals(that.startTime) : that.startTime != null) {
+        if (sapQuantity != null ? !sapQuantity.equals(that.sapQuantity) : that.sapQuantity != null) {
+            return false;
+        }
+        if (!startTime.equals(that.startTime)) {
             return false;
         }
 
@@ -96,8 +110,9 @@ public class ReleaserEvent {
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (startTime != null ? startTime.hashCode() : 0);
+        result = 31 * result + startTime.hashCode();
         result = 31 * result + (endTime != null ? endTime.hashCode() : 0);
+        result = 31 * result + (sapQuantity != null ? sapQuantity.hashCode() : 0);
         return result;
     }
 }

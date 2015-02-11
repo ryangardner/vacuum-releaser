@@ -51,14 +51,14 @@ class ReleaserRoutes extends RouteBuilder {
 
         from("seda:releaserSoftware")
                 .choice()
-                .when(body().isEqualTo("open"))
-                .to("direct:releaserOpening")
-                .otherwise()
+                .when(body().isEqualTo("close"))
                 .to("direct:releaserClosing")
+                .otherwise()
+                .to("direct:releaserOpening")
                 .endChoice()
 
         from("direct:releaserOpening").routeId("createEvent")
-                .setBody { new ReleaserEvent(startTime: ZonedDateTime.now()) }
+                //.setBody { new ReleaserEvent(startTime: ZonedDateTime.now()) }
                 .to("direct:saveReleaserEvent")
 
         from("direct:releaserClosing").routeId("updateEvent")

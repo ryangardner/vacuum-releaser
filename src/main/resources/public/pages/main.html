@@ -3,7 +3,7 @@
 
     <p>The vacuum releaser is up and running. It was started up <span am-time-ago="releaserStats.startDate"  am-preprocess="unix"></span>.</p>
 
-    <p ng-cloak>The releaser has emptied {{releaserStats.countForToday}} times today, and
+    <p ng-cloak>The releaser has emptied <strong>{{releaserStats.countForToday}} times</strong> today, dumping <strong>{{releaserStats.gallonsForToday}} gallons</strong>, and
         {{releaserStats.countTotal}} times since the start of the season.</p>
 
     <p>The most recent release event was <span am-time-ago="releaserStats.mostRecentReleaseEvent"  am-preprocess="unix"></span> </p>
@@ -15,8 +15,8 @@
     <div class="col-sm-6 col-md-4 col-lg-2" ng-controller="todaysStats">
         <h2>Sap Gathered</h2>
 
-        <p ng-cloak>{{releaserStats.countForToday * 1.2}} gallons</strong> of sap have been collected today. This is
-            <strong>{{releaserStats.countForToday * 1.2 / 100}} gallons per
+        <p ng-cloak>{{releaserStats.gallonsForToday}} gallons</strong> of sap have been collected today. This is
+            <strong>{{releaserStats.gallonsForToday / 100}} gallons per
                 tap</strong> for the day</p>
 
         <p><a href="http://www.tutorialrepublic.com/html-tutorial/" target="_blank" class="btn btn-success">View

@@ -2,12 +2,16 @@ package com.ryebrye.releaser;
 
 import com.github.oxo42.stateless4j.StateMachine;
 import com.github.oxo42.stateless4j.StateMachineConfig;
+import com.ryebrye.releaser.historical.ReleaserEvent;
 import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.time.ZonedDateTime;
 
 /**
  * This class manages the state of the releaser and responds to hardware events appropriately.
@@ -19,6 +23,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ReleaserControl {
     private static final Logger log = LoggerFactory.getLogger(ReleaserControl.class);
+
+    @Autowired
+    ReleaserSettingsRepository releaserSettingsRepository;
 
     @EndpointInject(uri = "seda:releaserControl")
     ProducerTemplate emptyReleaser;
@@ -56,7 +63,10 @@ public class ReleaserControl {
 
     private void handleFullReleaser() {
         log.info("sending open message");
-        emptyReleaser.sendBody("open");
+        ReleaserEvent startEvent = new ReleaserEvent();
+        startEvent.setStartTime(ZonedDateTime.now());
+        startEvent.setSapQuantity(releaserSettingsRepository.findReleaserSettings().getSapQuantityPerFullDump());
+        emptyReleaser.sendBody(startEvent);
     }
 
     private void handleEmptyReleaser() {

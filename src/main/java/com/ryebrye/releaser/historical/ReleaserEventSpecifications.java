@@ -28,6 +28,7 @@ public class ReleaserEventSpecifications {
         };
     }
 
+
     public static Specification<ReleaserEvent> completedEvents() {
         return new Specification<ReleaserEvent>() {
             @Override

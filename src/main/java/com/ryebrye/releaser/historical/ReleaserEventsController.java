@@ -19,4 +19,9 @@ public class ReleaserEventsController {
     public List<ReleaserEvent> releaserEvents() {
         return releaserEventRepository.findAll();
     }
+
+    @RequestMapping(value = "/releaserEventsCsv", produces = "text/csv")
+    public List<ReleaserEvent> releaserEventsCsv() {
+        return releaserEventRepository.findAll();
+    }
 }

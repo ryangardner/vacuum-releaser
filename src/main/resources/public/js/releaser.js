@@ -1,4 +1,4 @@
-var app = angular.module('releaserHome', ['angularMoment', 'ui.router'])
+var app = angular.module('releaserHome', ['angularMoment', 'ui.router', 'ngResource'])
     .run(['$rootScope', '$state', '$stateParams',
         function ($rootScope, $state, $stateParams) {
 
@@ -31,6 +31,12 @@ var app = angular.module('releaserHome', ['angularMoment', 'ui.router'])
         $stateProvider.state(data);
         $stateProvider.state(settings);
     }]);
+
+app.factory("Settings", function($resource){
+   return $resource("/settings", {}, {
+        query: { method: "GET", isArray: false}
+    });
+});
 
 app.controller('statisticsOverview',
     function ($scope, $http) {

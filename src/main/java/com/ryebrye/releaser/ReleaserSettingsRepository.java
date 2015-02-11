@@ -3,6 +3,7 @@ package com.ryebrye.releaser;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 
 import java.util.List;
@@ -24,4 +25,8 @@ public interface ReleaserSettingsRepository  extends JpaRepository<ReleaserSetti
     @Override
     @Cacheable("settingsCache")
     ReleaserSettings findOne(Long aLong);
+
+    @Cacheable("settingsCache")
+    @Query("select rs from ReleaserSettings rs where rs.id = 0")
+    ReleaserSettings findReleaserSettings();
 }

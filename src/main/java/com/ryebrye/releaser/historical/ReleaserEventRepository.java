@@ -16,4 +16,5 @@ public interface ReleaserEventRepository extends JpaRepository<ReleaserEvent, Lo
 
     @Query(value = "select * from releaser_event as e where e.start_time is not null and e.end_time is not null order by e.start_time desc limit 1", nativeQuery = true)
     public ReleaserEvent findMostRecentCompletedEvent();
+
 }
