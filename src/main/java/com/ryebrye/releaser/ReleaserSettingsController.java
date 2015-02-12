@@ -23,7 +23,7 @@ public class ReleaserSettingsController {
     }
 
     @RequestMapping(value="/settings", method= RequestMethod.POST)
-    public void saveReleaserSettings(@RequestBody ReleaserSettings releaserSettings) {
-        releaserSettingsRepository.saveAndFlush(releaserSettings);
+    public ReleaserSettings saveReleaserSettings(@RequestBody ReleaserSettings releaserSettings) {
+        return releaserSettingsRepository.saveAndFlush(releaserSettings);
     }
 }

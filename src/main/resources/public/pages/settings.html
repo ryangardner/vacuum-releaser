@@ -1,4 +1,4 @@
-<form class="form-horizontal">
+<form class="form-horizontal" ng-controller="settingsController" ng-submit="submit()">
 <fieldset>
 
 <!-- Form Name -->
@@ -8,7 +8,7 @@
 <div class="control-group">
   <label class="control-label" for="gallonsPerFullDump">Gallons Per Full Dump</label>
   <div class="controls">
-    <input id="gallonsPerFullDump" name="gallonsPerFullDump" type="text" placeholder="1.05" class="input-mini">
+    <input ng-model="gallonsPerFullDump" name="gallonsPerFullDump" type="text" class="input-mini" required="">
     <p class="help-block">The number of gallons per full dump of this releaser</p>
   </div>
 </div>
@@ -17,10 +17,11 @@
 <div class="control-group">
   <label class="control-label" for="numberOfTaps">Number of Taps</label>
   <div class="controls">
-    <input id="numberOfTaps" name="numberOfTaps" type="text" placeholder="100" class="input-mini" required="">
+    <input ng-model="numberOfTaps" name="numberOfTaps" type="text" class="input-mini" required="">
     <p class="help-block">The number of taps feeding into this releaser</p>
   </div>
 </div>
 
+  <button>Submit</button>
 </fieldset>
 </form>

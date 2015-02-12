@@ -32,6 +32,19 @@ var app = angular.module('releaserHome', ['angularMoment', 'ui.router', 'ngResou
         $stateProvider.state(settings);
     }]);
 
+
+app.service("settingsService", ["$http", function($http){
+    var set = function (params){
+        return $http
+               .post("/settings", params)
+               .then(function (response){
+                  return response.data;
+               });
+    };
+
+    return { set : set };
+}]);
+
 app.factory("Settings", function($resource){
    return $resource("/settings", {}, {
         query: { method: "GET", isArray: false}
@@ -54,4 +67,14 @@ app.controller('todaysStats',
             });
     });
 
+app.controller('settingsController', ["$scope","settingsService", function($scope, settingsService){
+    $scope.numberOfTaps = 100;
+    $scope.gallonsPerFullDump = 1.05;
 
+    $scope.submit = function(){
+        settingsService.set({"id":0, "numberOfTaps":$scope.numberOfTaps, "sapQuantityPerFullDump":$scope.gallonsPerFullDump})
+                        .then(function(data){
+                            console.log(data);
+                        });
+    }
+}]);
