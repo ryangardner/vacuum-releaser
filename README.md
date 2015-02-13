@@ -1,7 +1,9 @@
 vacuum-releaser
 ===============
 
-the brains to a raspberry-pi vacuum releaser
+The world's first internet connected open-source vacuum releaser for maple sugaring.
+
+![Screenshot](http://ryangardner.github.io/vacuum-releaser/images/uiScreenshot.png)
 
 Build this project using maven, then run on raspberry pi with the following command line arguments.
 
