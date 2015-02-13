@@ -3,6 +3,21 @@ package com.ryebrye.releaser;
 import org.h2.mvstore.MVStore;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.MessageSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.XADataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.mobile.SitePreferenceAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.reactor.ReactorAutoConfiguration;
+import org.springframework.boot.autoconfigure.redis.RedisAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.social.FacebookAutoConfiguration;
+import org.springframework.boot.autoconfigure.social.LinkedInAutoConfiguration;
+import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
+import org.springframework.boot.autoconfigure.websocket.WebSocketAutoConfiguration;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -24,7 +39,23 @@ import java.util.Arrays;
 @Configuration
 @ComponentScan
 @EnableCaching
-@EnableAutoConfiguration
+@EnableAutoConfiguration(exclude = {
+        org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration.class,
+        XADataSourceAutoConfiguration.class,
+        WebSocketAutoConfiguration.class,
+        VelocityAutoConfiguration.class,
+        SecurityAutoConfiguration.class,
+        RabbitAutoConfiguration.class,
+        RedisAutoConfiguration.class,
+        RepositoryRestMvcAutoConfiguration.class,
+        SitePreferenceAutoConfiguration.class,
+        MongoRepositoriesAutoConfiguration.class,
+        MongoDataAutoConfiguration.class,
+        MessageSourceAutoConfiguration.class,
+        LinkedInAutoConfiguration.class,
+        ReactorAutoConfiguration.class,
+        AopAutoConfiguration.class
+    })
 @EnableJpaRepositories(basePackages = {"com.ryebrye.releaser.historical", "com.ryebrye.releaser", "org.apache.camel.bam.model"})
 @ImportResource("classpath:camel-context.xml")
 public class ReleaserApplication {
