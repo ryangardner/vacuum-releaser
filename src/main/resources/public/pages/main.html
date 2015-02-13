@@ -25,7 +25,8 @@
     <div class="col-md-4 col-sm-6 col-lg-3" ng-controller="weatherSensors">
         <h2>Current Weather</h2>
         <p>Current pressure is <strong>{{weatherSensors.pressure | number:2}}" Hg</strong></p>
-        <p>Temperature: <strong>{{weatherSensors.temperature * 9/5 + 32 | number:2}}°F</strong></p>
+        <p>The boiling point of water is currently <strong>{{ weatherSensors.boilingPoint | number:1}}° F</strong>
+        <p>Temperature: <strong>{{weatherSensors.temperature * 9/5 + 32 | number:1}}°F</strong></p>
         <p><a href="http://www.tutorialrepublic.com/css-tutorial/" target="_blank" class="btn btn-success">View Weather History &raquo;</a></p>
     </div>
     <div class="clearfix visible-sm-block"></div>

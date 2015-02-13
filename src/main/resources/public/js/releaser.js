@@ -79,6 +79,7 @@ app.controller('weatherSensors',
         $http.get('/sensors/weather').
             success(function (data) {
                 $scope.weatherSensors = data;
+                $scope.weatherSensors.boilingPoint =  (49.161 * Math.log(data.pressure) + 44.932)
             });
     });
 
