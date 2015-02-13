@@ -1,7 +1,7 @@
 <div class="jumbotron" ng-controller="statisticsOverview">
     <h1>Everything is working</h1>
 
-    <p>The vacuum releaser is up and running. It was started up <span am-time-ago="releaserStats.startDate"  am-preprocess="unix"></span>.</p>
+    <p>The vacuum releaser started running <span am-time-ago="releaserStats.startDate"  am-preprocess="unix"></span>.</p>
 
     <p ng-cloak>The releaser has emptied <strong>{{releaserStats.countForToday}} times</strong> today, dumping <strong>{{releaserStats.gallonsForToday | number: 1}} gallons</strong>, and
         {{releaserStats.countTotal}} times since the start of the season.</p>
