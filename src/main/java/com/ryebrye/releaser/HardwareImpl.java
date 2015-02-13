@@ -74,25 +74,19 @@ public class HardwareImpl {
         releaserManagement.broadcastHighSwitchStatus(highFloatSwitch.getState().isHigh());
     }
 
-    @Consume(uri="seda:releaserHardwareControl")
-    public void handleReleaserControl(String message) {
+    @Consume(uri = "seda:releaserHardwareControl")
+    public void handleReleaserControl(Object message) {
         log.info("handling releaser control message '{}'", message);
-        switch (message) {
-            case "open":
-                log.info("Setting vacuum relay state to LOW (open) in response to control message");
-                vacuumRelay.low();
-                releaserActiveLED.high();
-                break;
-            case "close":
-                log.info("Setting vacuum relay state to HIGH (closed) in response to control message");
-                vacuumRelay.high();
-                releaserActiveLED.low();
-                break;
-            default:
-                log.error("couldn't handle the message in the switch statement");
+        if ("close".equals(String.valueOf(message))) {
+            log.info("Setting vacuum relay state to HIGH (closed) in response to control message");
+            vacuumRelay.high();
+            releaserActiveLED.low();
+        } else {
+            log.info("Setting vacuum relay state to LOW (open) in response to control message");
+            vacuumRelay.low();
         }
-    }
 
+    }
 
 
     @PreDestroy

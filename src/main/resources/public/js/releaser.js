@@ -33,21 +33,29 @@ var app = angular.module('releaserHome', ['angularMoment', 'ui.router', 'ngResou
     }]);
 
 
-app.service("settingsService", ["$http", function($http){
-    var set = function (params){
+app.service("settingsService", ["$http", function ($http) {
+    var set = function (params) {
         return $http
-               .post("/settings", params)
-               .then(function (response){
-                  return response.data;
-               });
+            .post("/settings", params)
+            .then(function (response) {
+                return response.data;
+            });
     };
 
-    return { set : set };
+    var get = function () {
+        return $http
+            .get("/settings")
+            .then(function (response) {
+                return response.data;
+            });
+    };
+
+    return {set: set, get: get};
 }]);
 
-app.factory("Settings", function($resource){
-   return $resource("/settings", {}, {
-        query: { method: "GET", isArray: false}
+app.factory("Settings", function ($resource) {
+    return $resource("/settings", {}, {
+        query: {method: "GET", isArray: false}
     });
 });
 
@@ -59,22 +67,37 @@ app.controller('statisticsOverview',
             });
     });
 
-app.controller('todaysStats',
-    function ($scope, $http) {
+app.controller('todaysStats', ["$scope", "$http", "settingsService",
+    function ($scope, $http, settingsService) {
         $http.get('/basicStats').
             success(function (data) {
                 $scope.releaserStats = data;
             });
-    });
 
-app.controller('settingsController', ["$scope","settingsService", function($scope, settingsService){
-    $scope.numberOfTaps = 100;
-    $scope.gallonsPerFullDump = 1.05;
+        settingsService.get().then(function (data) {
+            $scope.releaserSettings = data;
+        })
 
-    $scope.submit = function(){
-        settingsService.set({"id":0, "numberOfTaps":$scope.numberOfTaps, "sapQuantityPerFullDump":$scope.gallonsPerFullDump})
-                        .then(function(data){
-                            console.log(data);
-                        });
+    }]);
+
+app.controller('settingsController', ["$scope", "settingsService", function ($scope, settingsService) {
+    settingsService.get().then(function (data) {
+        console.log(data)
+        $scope.numberOfTaps = data.numberOfTaps;
+        $scope.gallonsPerFullDump = data.gallonsPerFullDump;
+    })
+
+    //$scope.numberOfTaps = 100;
+    //$scope.gallonsPerFullDump = 1.05;
+
+    $scope.submit = function () {
+        settingsService.set({
+            "id": 0,
+            "numberOfTaps": $scope.numberOfTaps,
+            "gallonsPerFullDump": $scope.gallonsPerFullDump
+        })
+            .then(function (data) {
+                console.log(data);
+            });
     }
 }]);

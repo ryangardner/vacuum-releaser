@@ -58,6 +58,7 @@ public class ReleaserControl {
                 .onEntry(this::handleEmptyReleaser)
                 .permit(ReleaserTrigger.SapAboveLowPoint, ReleaserState.Filling);
 
+
         releaser = new StateMachine<ReleaserState, ReleaserTrigger>(ReleaserState.Empty, releaserStateConfig);
     }
 
@@ -65,7 +66,7 @@ public class ReleaserControl {
         log.info("sending open message");
         ReleaserEvent startEvent = new ReleaserEvent();
         startEvent.setStartTime(ZonedDateTime.now());
-        startEvent.setSapQuantity(releaserSettingsRepository.findReleaserSettings().getSapQuantityPerFullDump());
+        startEvent.setSapQuantity(releaserSettingsRepository.findReleaserSettings().getGallonsPerFullDump());
         emptyReleaser.sendBody(startEvent);
     }
 

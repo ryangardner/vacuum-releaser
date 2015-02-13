@@ -19,7 +19,7 @@ public class ReleaserSettings {
     @Id
     private Long id=0l;
 
-    private Double  sapQuantityPerFullDump;
+    private Double  gallonsPerFullDump;
 
     private Integer numberOfTaps;
 
@@ -27,12 +27,12 @@ public class ReleaserSettings {
         return id;
     }
 
-    public Double getSapQuantityPerFullDump() {
-        return sapQuantityPerFullDump;
+    public Double getGallonsPerFullDump() {
+        return gallonsPerFullDump;
     }
 
-    public void setSapQuantityPerFullDump(Double sapQuantityPerFullDump) {
-        this.sapQuantityPerFullDump = sapQuantityPerFullDump;
+    public void setGallonsPerFullDump(Double sapQuantityPerFullDump) {
+        this.gallonsPerFullDump = sapQuantityPerFullDump;
     }
 
     public Integer getNumberOfTaps() {
@@ -46,7 +46,7 @@ public class ReleaserSettings {
     public static ReleaserSettings withDefaults() {
         ReleaserSettings releaserSettings = new ReleaserSettings();
         releaserSettings.setNumberOfTaps(100);
-        releaserSettings.setSapQuantityPerFullDump(1.01);
+        releaserSettings.setGallonsPerFullDump(1.01);
         return releaserSettings;
     }
 }
