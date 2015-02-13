@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Vacuum-releaser : the brains to a raspberry-pi vacuum releaser">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Vacuum-releaser</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/ryangardner/vacuum-releaser">View on GitHub</a>
+
+          <h1 id="project_title">Vacuum-releaser</h1>
+          <h2 id="project_tagline">the brains to a raspberry-pi vacuum releaser</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/ryangardner/vacuum-releaser/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/ryangardner/vacuum-releaser/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="vacuum-releaser" class="anchor" href="#vacuum-releaser" aria-hidden="true"><span class="octicon octicon-link"></span></a>vacuum-releaser</h1>
+
+<p>the brains to a raspberry-pi vacuum releaser</p>
+
+<p>Build this project using maven, then run on raspberry pi with the following command line arguments.</p>
+
+<p>As of right now, you will need to get a twitter api key etc setup so you can pass those in for your account (making the
+twitter part configurable is on the to-do list, but passing the keys at startup is at least usable for now)</p>
+
+<pre><code>sudo java -XX:MetaspaceSize=32m -Xmx368m -Xms96m -jar -Dspring.profiles.active=raspberryPi,default raspberry-pi-test-0.0.1-SNAPSHOT.jar --twitter.consumerApiKey=[your consumer api key] --twitter.consumerSecret=[your thing] --twitter.accessToken=[your token] --twitter.accessTokenSecret=[your secret]
+</code></pre>
+
+<p>More instructions to come later.</p>
+
+<h2>
+<a id="local-development" class="anchor" href="#local-development" aria-hidden="true"><span class="octicon octicon-link"></span></a>Local Development</h2>
+
+<p>Local development is a much faster way to develop then pushing the file to a raspberry pi and waiting for it to restart. Some simple mbeans
+are available that you can use to send messages into the same message bus that the float switches do when running on the actual raspberry pi.</p>
+
+<p>To run locally, you can run the <code>ReleaserApplication</code> from inside your ide or by executing: <code>mvn spring-boot:run</code> from the command line.</p>
+
+<p>Once it is started, you can navigate to:</p>
+
+<p><a href="http://localhost:8080/index.html">http://localhost:8080/index.html</a> to see the home page.</p>
+
+<h3>
+<a id="simulating-the-hardware" class="anchor" href="#simulating-the-hardware" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simulating the hardware</h3>
+
+<p>To simulate the low float switch becoming active, you can send the following request to your local server:</p>
+
+<p>http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/true</p>
+
+<p>Similarly the high switch can be set high by doing:
+http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/true</p>
+
+<p>To simulate an entire filling / emptying cycle you can run:
+http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/true
+http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/true
+http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/false
+http://localhost:8080/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/false</p>
+
+<p>After running a few simulated dumps of the releaser, if you refresh the index page, you should see the values change there.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Vacuum-releaser maintained by <a href="https://github.com/ryangardner">ryangardner</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
