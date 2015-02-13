@@ -53,12 +53,6 @@ app.service("settingsService", ["$http", function ($http) {
     return {set: set, get: get};
 }]);
 
-app.factory("Settings", function ($resource) {
-    return $resource("/settings", {}, {
-        query: {method: "GET", isArray: false}
-    });
-});
-
 app.controller('statisticsOverview',
     function ($scope, $http) {
         $http.get('/basicStats').
@@ -79,6 +73,14 @@ app.controller('todaysStats', ["$scope", "$http", "settingsService",
         })
 
     }]);
+
+app.controller('weatherSensors',
+    function ($scope, $http) {
+        $http.get('/sensors/weather').
+            success(function (data) {
+                $scope.weatherSensors = data;
+            });
+    });
 
 app.controller('settingsController', ["$scope", "settingsService", function ($scope, settingsService) {
     settingsService.get().then(function (data) {

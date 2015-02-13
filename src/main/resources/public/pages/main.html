@@ -12,27 +12,24 @@
         Statistics</a></p>
 </div>
 <div class="row">
-    <div class="col-sm-6 col-md-4 col-lg-2" ng-controller="todaysStats">
+    <div class="col-md-4 col-sm-6 col-lg-3" ng-controller="todaysStats">
         <h2>Sap Gathered</h2>
 
-        <p ng-cloak>{{releaserStats.gallonsForToday | number : 1}} gallons</strong> of sap have been collected today. This is
-            <strong>{{ (releaserStats.gallonsForToday / releaserSettings.numberOfTaps) | number: 2}} gallons per
-                tap</strong> for the day </p>
+        <p ng-cloak><strong>{{releaserStats.gallonsForToday | number : 1}} gallons</strong> of sap have been collected today.</p>
+        <p>This is <strong>{{ (releaserStats.gallonsForToday / releaserSettings.numberOfTaps) | number: 2}}
+            gallons per tap</strong> for today. </p>
 
         <p><a href="http://www.tutorialrepublic.com/html-tutorial/" target="_blank" class="btn btn-success">View
             More Data &raquo;</a></p>
     </div>
-    <div class="col-sm-6 col-md-4 col-lg-2">
-        <h2>Vacuum Is On</h2>
-
-        <p>At the releaser, the vacuum level is measuring <strong>26.5"</strong> currently. The lowest vacuum level
-            of <strong>25.4"</strong> was at 12:03 PM yesterday</p>
-
-        <p><a href="http://www.tutorialrepublic.com/css-tutorial/" target="_blank" class="btn btn-success">View
-            Vacuum History &raquo;</a></p>
+    <div class="col-md-4 col-sm-6 col-lg-3" ng-controller="weatherSensors">
+        <h2>Current Weather</h2>
+        <p>Current pressure is <strong>{{weatherSensors.pressure | number:2}}" Hg</strong></p>
+        <p>Temperature: <strong>{{weatherSensors.temperature * 9/5 + 32 | number:2}}°F</strong></p>
+        <p><a href="http://www.tutorialrepublic.com/css-tutorial/" target="_blank" class="btn btn-success">View Weather History &raquo;</a></p>
     </div>
     <div class="clearfix visible-sm-block"></div>
-    <div class="col-sm-6 col-md-4 col-lg-2">
+    <div class="col-md-4 col-sm-6 col-lg-3">
         <h2>Actively Tweeting</h2>
 
         <p>The vacuum releaser is actively tweeting its status updates as the twitter user
