@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Ryan Gardner
@@ -17,11 +18,17 @@ public class ReleaserEventsController {
 
     @RequestMapping("/releaserEvents")
     public List<ReleaserEvent> releaserEvents() {
-        return releaserEventRepository.findAll();
+        List<ReleaserEvent> releaserEvents = releaserEventRepository.findAll();
+        releaserEvents.forEach((ReleaserEvent event) -> {
+                    if (event.getSapQuantity() == null) {
+                        event.setSapQuantity(1.2);
+                    }
+                    if (event.getTemperature() == null) {
+                        event.setTemperature(ThreadLocalRandom.current().nextDouble(32, 60));
+                    }
+                }
+        );
+        return releaserEvents;
     }
 
-    @RequestMapping(value = "/releaserEventsCsv", produces = "text/csv")
-    public List<ReleaserEvent> releaserEventsCsv() {
-        return releaserEventRepository.findAll();
-    }
 }

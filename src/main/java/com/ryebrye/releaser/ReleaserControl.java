@@ -3,6 +3,7 @@ package com.ryebrye.releaser;
 import com.github.oxo42.stateless4j.StateMachine;
 import com.github.oxo42.stateless4j.StateMachineConfig;
 import com.ryebrye.releaser.historical.ReleaserEvent;
+import com.ryebrye.releaser.weathersensors.TemperatureSensor;
 import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
@@ -23,6 +24,9 @@ import java.time.ZonedDateTime;
 @Component
 public class ReleaserControl {
     private static final Logger log = LoggerFactory.getLogger(ReleaserControl.class);
+
+    @Autowired
+    TemperatureSensor temperatureSensor;
 
     @Autowired
     ReleaserSettingsRepository releaserSettingsRepository;
@@ -66,7 +70,8 @@ public class ReleaserControl {
         log.info("sending open message");
         ReleaserEvent startEvent = new ReleaserEvent();
         startEvent.setStartTime(ZonedDateTime.now());
-        startEvent.setSapQuantity(releaserSettingsRepository.findReleaserSettings().getGallonsPerFullDump()         );
+        startEvent.setSapQuantity(releaserSettingsRepository.findReleaserSettings().getGallonsPerFullDump());
+        startEvent.setTemperature(temperatureSensor.readTemperature());
         emptyReleaser.sendBody(startEvent);
     }
 
