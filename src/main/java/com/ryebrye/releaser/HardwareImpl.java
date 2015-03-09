@@ -31,6 +31,7 @@ import javax.annotation.PreDestroy;
 public class HardwareImpl {
 
     private static final Logger log = LoggerFactory.getLogger(HardwareImpl.class);
+    public static final int DEBOUNCE_MS = 150;
 
     @Autowired
     protected ReleaserManagement releaserManagement;
@@ -48,9 +49,11 @@ public class HardwareImpl {
         log.info(" Pin 00 -> low level float switch. Should be high when it is active");
 
         lowFloatSwitch = gpio.provisionDigitalInputPin(RaspiPin.GPIO_00, PinPullResistance.PULL_DOWN);
+        lowFloatSwitch.setDebounce(DEBOUNCE_MS);
         log.info(" Pin 01 -> high level float switch. Should be high when it is active");
 
         highFloatSwitch = gpio.provisionDigitalInputPin(RaspiPin.GPIO_01, PinPullResistance.PULL_DOWN);
+        highFloatSwitch.setDebounce(DEBOUNCE_MS);
         log.info(" Pin 02 -> releaser activity LED");
 
         releaserActiveLED = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_02, PinState.LOW);
