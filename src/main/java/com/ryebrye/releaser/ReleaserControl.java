@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class manages the state of the releaser and responds to hardware events appropriately.
@@ -38,14 +40,29 @@ public class ReleaserControl {
         Filling, Full, Emptying, Empty
     }
 
+    private ScheduledThreadPoolExecutor cooldownExecutor = new ScheduledThreadPoolExecutor(1);
+
     private enum ReleaserTrigger {
         SapAboveHighPoint, SapBelowHighPoint, SapAboveLowPoint, SapBelowLowPoint
     }
+
+    private long lastReleaseTimeMillis = 0;
+    protected static long COOLDOWN_PERIOD = TimeUnit.SECONDS.toMillis(2);
+
+    private boolean sapAboveLowPoint = false;
+    private boolean sapAboveHighPoint = false;
 
     StateMachine<ReleaserState, ReleaserTrigger> releaser;
 
 
     public ReleaserControl() {
+        StateMachineConfig<ReleaserState, ReleaserTrigger> releaserStateConfig = initialConfiguration();
+
+        releaser = new StateMachine<ReleaserState, ReleaserTrigger>(ReleaserState.Empty, initialReleaserConfig(releaserStateConfig));
+    }
+
+    // split out to make it easier to test
+    protected StateMachineConfig<ReleaserState, ReleaserTrigger> initialConfiguration() {
         StateMachineConfig<ReleaserState, ReleaserTrigger> releaserStateConfig = new StateMachineConfig<>();
 
         releaserStateConfig.configure(ReleaserState.Filling)
@@ -53,22 +70,40 @@ public class ReleaserControl {
 
         releaserStateConfig.configure(ReleaserState.Full)
                 .onEntry(this::handleFullReleaser)
+                .onExit(this::scheduleCooldownCheck)
                 .permit(ReleaserTrigger.SapBelowHighPoint, ReleaserState.Emptying);
 
+
         releaserStateConfig.configure(ReleaserState.Emptying)
-                .permit(ReleaserTrigger.SapBelowLowPoint, ReleaserState.Empty);
+                .permitIf(ReleaserTrigger.SapBelowLowPoint, ReleaserState.Empty, this::isCooledDown);
+
 
         releaserStateConfig.configure(ReleaserState.Empty)
                 .onEntry(this::handleEmptyReleaser)
                 .permit(ReleaserTrigger.SapAboveLowPoint, ReleaserState.Filling);
+        return releaserStateConfig;
+    }
 
+    private StateMachineConfig<ReleaserState, ReleaserTrigger> initialReleaserConfig(StateMachineConfig<ReleaserState, ReleaserTrigger> releaserStateConfig) {
+        return releaserStateConfig;
+    }
 
-        releaser = new StateMachine<ReleaserState, ReleaserTrigger>(ReleaserState.Empty, releaserStateConfig);
+    private void scheduleCooldownCheck() {
+        cooldownExecutor.schedule(() -> {
+            if (!(this.sapAboveLowPoint)) {
+                releaser.fire(ReleaserTrigger.SapBelowLowPoint);
+            }
+        }, COOLDOWN_PERIOD, TimeUnit.MILLISECONDS);
+    }
+
+    private boolean isCooledDown() {
+        return (System.currentTimeMillis() - lastReleaseTimeMillis) > COOLDOWN_PERIOD;
     }
 
     private void handleFullReleaser() {
         log.info("sending open message");
         ReleaserEvent startEvent = new ReleaserEvent();
+        lastReleaseTimeMillis = System.currentTimeMillis();
         startEvent.setStartTime(ZonedDateTime.now());
         startEvent.setSapQuantity(releaserSettingsRepository.findReleaserSettings().getGallonsPerFullDump());
         startEvent.setTemperature(temperatureSensor.readTemperature());
@@ -82,6 +117,7 @@ public class ReleaserControl {
 
     @Consume(uri = "seda:highSwitchStateChange")
     public void handleHighSwitchStateChange(boolean highSwitchState) {
+        sapAboveHighPoint = highSwitchState;
         if (highSwitchState) {
             if (releaser.canFire(ReleaserTrigger.SapAboveHighPoint)) {
                 releaser.fire(ReleaserTrigger.SapAboveHighPoint);
@@ -99,17 +135,18 @@ public class ReleaserControl {
 
     @Consume(uri = "seda:lowSwitchStateChange")
     public void handleLowSwitchStateChange(boolean lowSwitchState) {
+        sapAboveLowPoint = lowSwitchState;
         if (lowSwitchState) {
             if (releaser.canFire(ReleaserTrigger.SapAboveLowPoint)) {
                 releaser.fire(ReleaserTrigger.SapAboveLowPoint);
             } else {
-                log.error("sap above the high point, but that's not valid for the state of {}", releaser.getState().name());
+                log.error("sap above the low point, but that's not valid for the state of {}", releaser.getState().name());
             }
         } else {
             if (releaser.canFire(ReleaserTrigger.SapBelowLowPoint)) {
                 releaser.fire(ReleaserTrigger.SapBelowLowPoint);
             } else {
-                log.error("Sap below high point is not a valid trigger for the state of {}", releaser.getState().name());
+                log.error("Sap below low point is not a valid trigger for the state of {}", releaser.getState().name());
             }
         }
     }
