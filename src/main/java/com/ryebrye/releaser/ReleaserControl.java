@@ -106,7 +106,7 @@ public class ReleaserControl {
         lastReleaseTimeMillis = System.currentTimeMillis();
         startEvent.setStartTime(ZonedDateTime.now());
         startEvent.setSapQuantity(releaserSettingsRepository.findReleaserSettings().getGallonsPerFullDump());
-        startEvent.setTemperature(temperatureSensor.readTemperature());
+        startEvent.setTemperature(temperatureSensor.readTemperatureFarenheit());
         emptyReleaser.sendBody(startEvent);
     }
 

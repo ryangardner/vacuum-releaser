@@ -139,9 +139,7 @@ public class BMP180Sensor implements TemperatureSensor, BarometricPressureSensor
         return raw;
     }
 
-    public double celciusToFarenheit(double celcius) {
-        return ((40 + celcius) * 1.8) - 40;
-    }
+
 
     @Override
     public double readTemperature() {
