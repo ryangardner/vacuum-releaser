@@ -8,7 +8,7 @@
 
     <p>The most recent release event was <span am-time-ago="releaserStats.mostRecentReleaseEvent"  am-preprocess="unix"></span> </p>
 
-    <p><a href="http://www.tutorialrepublic.com" target="_blank" class="btn btn-success btn-lg">View Detailed
+    <p><a ui-sref="data" class="btn btn-success btn-lg">View Detailed
         Statistics</a></p>
 </div>
 <div class="row">
@@ -19,7 +19,7 @@
         <p>This is <strong>{{ (releaserStats.gallonsForToday / releaserSettings.numberOfTaps) | number: 2}}
             gallons per tap</strong> for today. </p>
 
-        <p><a href="http://www.tutorialrepublic.com/html-tutorial/" target="_blank" class="btn btn-success">View
+        <p><a ui-sref="data" class="btn btn-success">View
             More Data &raquo;</a></p>
     </div>
     <div class="col-md-4 col-sm-6 col-lg-3" ng-controller="weatherSensors">

@@ -123,7 +123,7 @@ app.controller('dataVisController', ["$scope", "dataService", function ($scope, 
             return d.day;
         });
 
-        s.tempDimension = s.ndx.dimension(function (d) {
+        s.temperatureDimension = s.ndx.dimension(function (d) {
             return d.temperature;
         });
 
@@ -131,7 +131,7 @@ app.controller('dataVisController', ["$scope", "dataService", function ($scope, 
             return d.sapQuantity;
         });
 
-        s.tempGroup = s.tempDimension.group().reduceSum(function (d) {
+        s.temperatureGroup = s.temperatureDimension.group().reduceSum(function (d) {
             return d.sapQuantity;
         });
 
@@ -171,11 +171,11 @@ app.controller('dataVisController', ["$scope", "dataService", function ($scope, 
                 .renderlet(function (table) {
                     table.selectAll(".dc-table-group").classed("info", true);
                 });
-        }
+        };
         s.resetAll = function () {
             dc.filterAll();
             dc.redrawAll();
-        }
+        };
 
         s.adjustTickFormat = function (chart, options) {
             //chart.xAxis().tickFormat(function (x) { return (x.getMonth() + 1) + "/" + (x.getDate());})
@@ -186,7 +186,7 @@ app.controller('dataVisController', ["$scope", "dataService", function ($scope, 
         s.updateHourFormat = function (chart, options) {
             chart.xAxis().tickFormat(function (x) {
                 return s.hours[x];
-            })//(function(x) { return $scope.hours[x];});
+            });//(function(x) { return $scope.hours[x];});
         };
 
         s.minDate = s.dateDimension.bottom(1)[0].dd;
@@ -198,10 +198,10 @@ app.controller('dataVisController', ["$scope", "dataService", function ($scope, 
 
 app.controller('settingsController', ["$scope", "settingsService", function ($scope, settingsService) {
     settingsService.get().then(function (data) {
-        console.log(data)
+        console.log(data);
         $scope.numberOfTaps = data.numberOfTaps;
         $scope.gallonsPerFullDump = data.gallonsPerFullDump;
-    })
+    });
 
     //$scope.numberOfTaps = 100;
     //$scope.gallonsPerFullDump = 1.05;
