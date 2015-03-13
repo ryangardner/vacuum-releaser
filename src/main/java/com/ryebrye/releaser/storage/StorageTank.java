@@ -38,16 +38,19 @@ public class StorageTank {
         return warningThreshold;
     }
 
-    public void setWarningThreshold(double warningThreshold) {
+    public StorageTank setWarningThreshold(double warningThreshold) {
         this.warningThreshold = warningThreshold;
+        return this;
     }
 
-    public void addSap(double volume) {
+    public StorageTank addSap(double volume) {
         this.currentVolume += volume;
+        return this;
     }
 
-    public void removeSap(double volume) {
+    public StorageTank removeSap(double volume) {
         this.currentVolume -= volume;
+        return this;
     }
 
     public static StorageTank withDefaults() {

@@ -33,6 +33,26 @@ var app = angular.module('releaserHome', ['angularMoment', 'ui.router', 'angular
     }]);
 
 
+app.service("storageTankService", ["$http", function ($http) {
+    var set = function (params) {
+        return $http
+            .post("/storageTank", params)
+            .then(function (response) {
+                return response.data;
+            });
+    };
+
+    var get = function () {
+        return $http
+            .get("/storageTank")
+            .then(function (response) {
+                return response.data;
+            });
+    };
+
+    return {set: set, get: get};
+}]);
+
 app.service("settingsService", ["$http", function ($http) {
     var set = function (params) {
         return $http
@@ -194,6 +214,27 @@ app.controller('dataVisController', ["$scope", "dataService", function ($scope, 
 
         console.log(data);
     })
+}]);
+
+app.controller('storageTankController', ["$scope", "storageTankService", function ($scope, storageTankService) {
+    storageTankService.get().then(function (data) {
+        console.log(data);
+        $scope.currentVolume = data.currentVolume;
+        $scope.capacity= data.capacity;
+        $scope.warningThreshold= data.warningThreshold;
+    });
+
+    $scope.submit = function () {
+        storageTankService.set({
+            "id": 0,
+            "currentVolume": $scope.currentVolume,
+            "capacity": $scope.capacity,
+            "warningThreshold": $scope.warningThreshold
+        })
+            .then(function (data) {
+                console.log(data);
+            });
+    }
 }]);
 
 app.controller('settingsController', ["$scope", "settingsService", function ($scope, settingsService) {

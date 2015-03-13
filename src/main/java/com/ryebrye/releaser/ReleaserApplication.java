@@ -83,9 +83,10 @@ public class ReleaserApplication {
    	public CacheManager cacheManager() {
 
    		Cache cache = new ConcurrentMapCache("settingsCache");
+        Cache storageCache = new ConcurrentMapCache("storageTank");
 
    		SimpleCacheManager manager = new SimpleCacheManager();
-   		manager.setCaches(Arrays.asList(cache));
+   		manager.setCaches(Arrays.asList(new Cache[]{cache, storageCache}));
 
    		return manager;
    	}

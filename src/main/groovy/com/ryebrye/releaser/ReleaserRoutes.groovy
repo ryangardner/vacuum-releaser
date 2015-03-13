@@ -3,6 +3,8 @@ package com.ryebrye.releaser
 import com.ryebrye.releaser.historical.ReleaserEvent
 import com.ryebrye.releaser.historical.ReleaserEventRepository
 import com.ryebrye.releaser.historical.ReleaserEventSpecifications
+import com.ryebrye.releaser.storage.StorageTank
+import com.ryebrye.releaser.storage.StorageTankRepository
 import groovy.transform.CompileStatic
 import org.apache.camel.Exchange
 import org.apache.camel.builder.RouteBuilder
@@ -35,6 +37,9 @@ class ReleaserRoutes extends RouteBuilder {
     @Value('${twitter.accessTokenSecret}')
     private String accessTokenSecret
 
+    @Autowired
+    private StorageTankRepository storageTankRepository
+
 
     static final Logger log = LoggerFactory.getLogger(ReleaserRoutes)
 
@@ -66,11 +71,18 @@ class ReleaserRoutes extends RouteBuilder {
                 .process { Exchange it ->
             (it.in.body as ReleaserEvent).endTime = ZonedDateTime.now()
         }
-        .to("direct:saveReleaserEvent")
-                .to("direct:tweetAboutIt")
+        .to("direct:saveReleaserEvent","direct:tweetAboutIt", "direct:incrementSapInTank")
+
+        from("direct:incrementSapInTank")
+            .process({Exchange it ->
+                StorageTank tank = storageTankRepository.findStorageTank()
+                tank.addSap((it.in.body as ReleaserEvent).sapQuantity)
+                storageTankRepository.saveAndFlush(tank);
+            })
+
 
         from("direct:tweetAboutIt").routeId("tweet")
-                .transform({ Exchange it -> "More sap! That makes ${releaserEventRepository.count(ReleaserEventSpecifications.eventsOfDay(LocalDate.now()))} times for today. [still in testing - not real sap]" })
+                .transform({ Exchange it -> "More sap! That makes ${releaserEventRepository.count(ReleaserEventSpecifications.eventsOfDay(LocalDate.now()))} times for today." })
                 .to("twitter://timeline/user")
 
         // split this part out so we can easily use the BAM monitoring on this

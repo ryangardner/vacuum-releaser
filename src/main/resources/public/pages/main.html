@@ -30,6 +30,22 @@
         <p><a href="http://www.tutorialrepublic.com/css-tutorial/" target="_blank" class="btn btn-success">View Weather History &raquo;</a></p>
     </div>
     <div class="clearfix visible-sm-block"></div>
+    <div class="col-md-4 col-sm-6 col-lg-3" ng-controller="storageTankController">
+        <h2>Storage Tank</h2>
+
+        <div class="progress">
+          <div class="progress-bar" role="progressbar" aria-valuenow="{{currentVolume}}" aria-valuemin="0" aria-valuemax="{{capacity}}" style="width: {{currentVolume/capacity*100 | number:1}}%">
+              <span class="sr-only">{{currentVolume/capacity*100 | number:1}}%</span>
+          </div>
+        </div>
+
+        <p>The holding tank has <strong>{{currentVolume | number:1}}</strong> gallons in it now.</p>
+        <p>There are <strong>{{capacity - currentVolume | number:1}}</strong> gallons of space left.</p>
+
+        <p><a href="http://www.tutorialrepublic.com/twitter-bootstrap-tutorial/" target="_blank"
+              class="btn btn-success">Drain Tank</a></p>
+    </div>
+    <div class="clearfix visible-sm-block"></div>
     <div class="col-md-4 col-sm-6 col-lg-3">
         <h2>Actively Tweeting</h2>
 
