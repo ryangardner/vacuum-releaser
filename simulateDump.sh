@@ -1,5 +1,5 @@
 #! /bin/bash
-
+curl "http://localhost:8082/jolokia/exec/ryebrye:name=mockHardware/broadcastLowSwitchStatus/true"
 curl "http://localhost:8082/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/true"
 curl "http://localhost:8082/jolokia/exec/ryebrye:name=mockHardware/broadcastHighSwitchStatus/false"
 sleep 2
