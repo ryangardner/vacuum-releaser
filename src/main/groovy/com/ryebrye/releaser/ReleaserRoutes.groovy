@@ -64,16 +64,16 @@ class ReleaserRoutes extends RouteBuilder {
 
         from("direct:releaserOpening").routeId("createEvent")
                 //.setBody { new ReleaserEvent(startTime: ZonedDateTime.now()) }
-                .to("direct:saveReleaserEvent")
+                .to("seda:saveReleaserEvent")
 
         from("direct:releaserClosing").routeId("updateEvent")
                 .beanRef("releaserEventRepository", "findMostRecentUnfinishedEvent")
                 .process { Exchange it ->
             (it.in.body as ReleaserEvent).endTime = ZonedDateTime.now()
         }
-        .to("direct:saveReleaserEvent","direct:tweetAboutIt", "direct:incrementSapInTank")
+        .multicast().to("seda:saveReleaserEvent","seda:tweetAboutIt", "seda:incrementSapInTank")
 
-        from("direct:incrementSapInTank")
+        from("seda:incrementSapInTank")
             .process({Exchange it ->
                 StorageTank tank = storageTankRepository.findStorageTank()
                 tank.addSap((it.in.body as ReleaserEvent).sapQuantity)
@@ -81,12 +81,14 @@ class ReleaserRoutes extends RouteBuilder {
             })
 
 
-        from("direct:tweetAboutIt").routeId("tweet")
-                .transform({ Exchange it -> "More sap! That makes ${releaserEventRepository.count(ReleaserEventSpecifications.eventsOfDay(LocalDate.now()))} times for today." })
+        from("seda:tweetAboutIt").routeId("tweet")
+                .transform({ Exchange it ->
+                    "More sap! That makes ${releaserEventRepository.count(ReleaserEventSpecifications.eventsOfDay(LocalDate.now()))} time${releaserEventRepository.count(ReleaserEventSpecifications.eventsOfDay(LocalDate.now())) > 1? "s" : ""} for today. (Current Temperature is ${sprintf('%2.1f', (it.in.body as ReleaserEvent).temperature)}°F)" as String })
+                //.process({Exchange it -> log.info(it.in.body as String)})
                 .to("twitter://timeline/user")
 
         // split this part out so we can easily use the BAM monitoring on this
-        from("direct:saveReleaserEvent")
+        from("seda:saveReleaserEvent")
                 .beanRef("releaserEventRepository", "save")
                 .to("log:loggingReleasing")
 
