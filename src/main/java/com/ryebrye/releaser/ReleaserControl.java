@@ -2,6 +2,7 @@ package com.ryebrye.releaser;
 
 import com.github.oxo42.stateless4j.StateMachine;
 import com.github.oxo42.stateless4j.StateMachineConfig;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.ryebrye.releaser.historical.ReleaserEvent;
 import com.ryebrye.releaser.weathersensors.TemperatureSensor;
 import org.apache.camel.Consume;
@@ -40,7 +41,7 @@ public class ReleaserControl {
         Filling, Full, Emptying, Empty
     }
 
-    private ScheduledThreadPoolExecutor cooldownExecutor = new ScheduledThreadPoolExecutor(1);
+    private ScheduledThreadPoolExecutor cooldownExecutor = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNameFormat("releaser-control-%d").build());
 
     private enum ReleaserTrigger {
         SapAboveHighPoint, SapBelowHighPoint, SapAboveLowPoint, SapBelowLowPoint
