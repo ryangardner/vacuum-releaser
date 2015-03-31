@@ -6,12 +6,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.util.function.Function
+import java.time.*
 
 /**
  * @author Ryan Gardner
@@ -111,7 +106,7 @@ class ReleaserEventRepositorySpec extends Specification {
             releaserEventRepository.save(new ReleaserEvent(startTime: startingDateTime.plusHours(30), endTime: startingDateTime.plusHours(30).plusMinutes(1)))
 
         when:
-           def events = releaserEventRepository.findAll(ReleaserEventSpecifications.eventsOfDay(LocalDate.now(fixedClock)))
+            def events = releaserEventRepository.findAll(ReleaserEventSpecifications.eventsOfDay(LocalDate.now(fixedClock)))
         then:
             events.size() == 6
         cleanup:
@@ -121,7 +116,9 @@ class ReleaserEventRepositorySpec extends Specification {
 
     def "the most recent completed event can be found"() {
         setup:
-            ZonedDateTime now = ZonedDateTime.now()
+            Instant fixedInstant = Instant.parse("2014-03-06T06:01:01Z")
+            Clock fixedClock = Clock.fixed(fixedInstant, ZoneId.of(ZoneId.SHORT_IDS.get("EST")))
+            ZonedDateTime now = ZonedDateTime.now(fixedClock)
             releaserEventRepository.save(new ReleaserEvent(startTime: now.minusMinutes(2), endTime: now.minusMinutes(1)))
             releaserEventRepository.save(new ReleaserEvent(startTime: now.minusDays(1)))
             releaserEventRepository.save(new ReleaserEvent(startTime: now))
@@ -130,6 +127,25 @@ class ReleaserEventRepositorySpec extends Specification {
         then:
             event.endTime.isEqual(now.minusMinutes(1))
             event.startTime.isEqual(now.minusMinutes(2))
+        cleanup:
+            releaserEventRepository.deleteAllInBatch()
+    }
+
+
+    def "the second most recent completed event can be found"() {
+        setup:
+            Instant fixedInstant = Instant.parse("2014-03-06T06:01:01Z")
+            Clock fixedClock = Clock.fixed(fixedInstant, ZoneId.of(ZoneId.SHORT_IDS.get("EST")))
+            ZonedDateTime now = ZonedDateTime.now(fixedClock)
+
+            releaserEventRepository.save(new ReleaserEvent(startTime: now.minusMinutes(2), endTime: now.minusMinutes(1)))
+            releaserEventRepository.save(new ReleaserEvent(startTime: now.minusDays(1).minusMinutes(2), endTime: now.minusDays(1).minusMinutes(1)))
+            releaserEventRepository.save(new ReleaserEvent(startTime: now))
+        when:
+            def event = releaserEventRepository.findPenultimateCompletedEvent()
+        then:
+            event.endTime.isEqual(now.minusDays(1).minusMinutes(1))
+            event.startTime.isEqual(now.minusDays(1).minusMinutes(2))
         cleanup:
             releaserEventRepository.deleteAllInBatch()
     }

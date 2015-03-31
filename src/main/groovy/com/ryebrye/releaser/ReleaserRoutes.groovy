@@ -3,6 +3,7 @@ package com.ryebrye.releaser
 import com.ryebrye.releaser.historical.ReleaserEvent
 import com.ryebrye.releaser.historical.ReleaserEventRepository
 import com.ryebrye.releaser.historical.ReleaserEventSpecifications
+import com.ryebrye.releaser.historical.TwitterMessageGenerator
 import com.ryebrye.releaser.storage.StorageTank
 import com.ryebrye.releaser.storage.StorageTankRepository
 import groovy.transform.CompileStatic
@@ -37,6 +38,13 @@ class ReleaserRoutes extends RouteBuilder {
     @Value('${twitter.accessTokenSecret}')
     private String accessTokenSecret
 
+
+    @Autowired
+    private ReleaserEventRepository releaserEventRepository
+
+    @Autowired
+    private TwitterMessageGenerator twitterMessageGenerator
+
     @Autowired
     private StorageTankRepository storageTankRepository
 
@@ -48,7 +56,7 @@ class ReleaserRoutes extends RouteBuilder {
         log.info("Configuring routes")
 
         if (accessToken != null && accessTokenSecret != null && consumerSecret != null && consumerKey)
-        configureTwitterComponent()
+            configureTwitterComponent()
 
         from("seda:releaserControl")
                 .routeId("releaserControl")
@@ -63,7 +71,7 @@ class ReleaserRoutes extends RouteBuilder {
                 .endChoice()
 
         from("direct:releaserOpening").routeId("createEvent")
-                //.setBody { new ReleaserEvent(startTime: ZonedDateTime.now()) }
+        //.setBody { new ReleaserEvent(startTime: ZonedDateTime.now()) }
                 .to("seda:saveReleaserEvent")
 
         from("direct:releaserClosing").routeId("updateEvent")
@@ -71,20 +79,27 @@ class ReleaserRoutes extends RouteBuilder {
                 .process { Exchange it ->
             (it.in.body as ReleaserEvent).endTime = ZonedDateTime.now()
         }
-        .multicast().to("seda:saveReleaserEvent","seda:tweetAboutIt", "seda:incrementSapInTank")
+        .process { Exchange it ->
+            it.in.headers.put('lastEvent', releaserEventRepository.findMostRecentCompletedEvent() != null ? releaserEventRepository.findMostRecentCompletedEvent() : it.in.body)
+        }
+        .multicast().to("seda:saveReleaserEvent", "seda:tweetAboutIt", "seda:incrementSapInTank")
 
         from("seda:incrementSapInTank")
-            .process({Exchange it ->
-                StorageTank tank = storageTankRepository.findStorageTank()
-                tank.addSap((it.in.body as ReleaserEvent).sapQuantity)
-                storageTankRepository.saveAndFlush(tank);
-            })
+                .process({ Exchange it ->
+            StorageTank tank = storageTankRepository.findStorageTank()
+            tank.addSap((it.in.body as ReleaserEvent).sapQuantity)
+            storageTankRepository.saveAndFlush(tank);
+        })
 
 
         from("seda:tweetAboutIt").routeId("tweet")
                 .transform({ Exchange it ->
-                    "More sap! That makes ${releaserEventRepository.count(ReleaserEventSpecifications.eventsOfDay(LocalDate.now()))} time${releaserEventRepository.count(ReleaserEventSpecifications.eventsOfDay(LocalDate.now())) > 1? "s" : ""} for today. (Current Temperature is ${sprintf('%2.1f', (it.in.body as ReleaserEvent).temperature)}°F)" as String })
-                //.process({Exchange it -> log.info(it.in.body as String)})
+            "More sap! That makes ${releaserEventRepository.count(ReleaserEventSpecifications.eventsOfDay(LocalDate.now()))}" +
+                    " time${releaserEventRepository.count(ReleaserEventSpecifications.eventsOfDay(LocalDate.now())) > 1 ? "s" : ""} for today." +
+                    " (Temp is ${sprintf('%2.1f', (it.in.body as ReleaserEvent).temperature)}°F - " +
+                    "took ${twitterMessageGenerator.getTimeBetweenEvents(it.in.body as ReleaserEvent, it.in.getHeader("lastEvent") as ReleaserEvent)} for this cycle)" as String
+        })
+        //.process({Exchange it -> log.info(it.in.body as String)})
                 .to("twitter://timeline/user")
 
         // split this part out so we can easily use the BAM monitoring on this
@@ -103,7 +118,4 @@ class ReleaserRoutes extends RouteBuilder {
         tc.setConsumerSecret(consumerSecret);
     }
 
-
-    @Autowired
-    ReleaserEventRepository releaserEventRepository;
 }
