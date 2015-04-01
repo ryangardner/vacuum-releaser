@@ -78,7 +78,9 @@ class ReleaserRoutes extends RouteBuilder {
                 .beanRef("releaserEventRepository", "findMostRecentUnfinishedEvent")
                 .process { Exchange it ->
             (it.in.body as ReleaserEvent).endTime = ZonedDateTime.now()
-        }
+        }.to("seda:processCompletedEvent")
+
+        from("seda:processCompletedEvent")
         .process { Exchange it ->
             it.in.headers.put('lastEvent', releaserEventRepository.findMostRecentCompletedEvent() != null ? releaserEventRepository.findMostRecentCompletedEvent() : it.in.body)
         }
