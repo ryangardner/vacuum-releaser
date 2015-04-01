@@ -3,7 +3,7 @@ package com.ryebrye.releaser.doublereleaser;
 import com.ryebrye.releaser.ReleaserSettingsRepository;
 import com.ryebrye.releaser.historical.ReleaserEvent;
 import com.ryebrye.releaser.weathersensors.TemperatureSensor;
-import com.ryebrye.releaser.weathersensors.WeatherSensorController;
+
 import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
