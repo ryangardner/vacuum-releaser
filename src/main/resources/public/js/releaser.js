@@ -220,9 +220,22 @@ app.controller('storageTankController', ["$scope", "storageTankService", functio
     storageTankService.get().then(function (data) {
         console.log(data);
         $scope.currentVolume = data.currentVolume;
-        $scope.capacity= data.capacity;
-        $scope.warningThreshold= data.warningThreshold;
+        $scope.capacity = data.capacity;
+        $scope.warningThreshold = data.warningThreshold;
     });
+
+    $scope.drainTank = function () {
+        storageTankService.set({
+            "id": 0,
+            "currentVolume": 0,
+            "capacity": $scope.capacity,
+            "warningThreshold": $scope.warningThreshold
+        })
+            .then(function (data) {
+                $scope.currentVolume = 0;
+                console.log(data);
+            });
+    }
 
     $scope.submit = function () {
         storageTankService.set({
