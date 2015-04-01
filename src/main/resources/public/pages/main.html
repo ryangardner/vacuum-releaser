@@ -41,8 +41,8 @@
         <p>The holding tank has <strong>{{currentVolume | number:1}}</strong> gallons in it now.</p>
         <p>There are <strong>{{capacity - currentVolume | number:1}}</strong> gallons of space left.</p>
 
-        <p><a href="http://www.tutorialrepublic.com/twitter-bootstrap-tutorial/" target="_blank"
-              class="btn btn-success">Drain Tank</a></p>
+        <p><button type="button" ng-click="drainTank()" target="_blank"
+              class="btn btn-success">Drain Tank</button></p>
     </div>
     <div class="clearfix visible-sm-block"></div>
     <div class="col-md-4 col-sm-6 col-lg-3">
