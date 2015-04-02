@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -21,7 +22,8 @@ import javax.annotation.PostConstruct;
  * @author Ryan Gardner
  * @date 3/31/15
  */
-@Profile("raspberryPi")
+@Profile("doubleReleaser")
+@Component
 public class DoubleReleaserHardware {
     private static final Logger log = LoggerFactory.getLogger(DoubleReleaserHardware.class);
 
@@ -43,8 +45,8 @@ public class DoubleReleaserHardware {
         log.info(" Pin 10 -> low side switch. Should complete circuit to ground when it is active");
         log.info(" Pin 11 -> right side switch. Should complete circuit to ground when it is active");
 
-        leftSideDumpingSwitch = gpio.provisionDigitalInputPin(RaspiPin.GPIO_10, PinPullResistance.PULL_DOWN);
-        rightSideDumpingSwitch = gpio.provisionDigitalInputPin(RaspiPin.GPIO_11, PinPullResistance.PULL_DOWN);
+        leftSideDumpingSwitch = gpio.provisionDigitalInputPin(RaspiPin.GPIO_10, PinPullResistance.PULL_UP);
+        rightSideDumpingSwitch = gpio.provisionDigitalInputPin(RaspiPin.GPIO_11, PinPullResistance.PULL_UP);
 
         leftSideDumpingSwitch.addListener((GpioPinListenerDigital) (GpioPinDigitalStateChangeEvent event) -> {
             log.debug("left float switch signal is now {}", event.getState().isHigh());
