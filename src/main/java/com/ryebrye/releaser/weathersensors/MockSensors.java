@@ -1,13 +1,18 @@
 package com.ryebrye.releaser.weathersensors;
 
 import com.github.dvdme.ForecastIOLib.FIOCurrently;
+import com.github.dvdme.ForecastIOLib.FIODataPoint;
 import com.github.dvdme.ForecastIOLib.ForecastIO;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Ryan Gardner
@@ -16,6 +21,16 @@ import java.util.concurrent.ThreadLocalRandom;
 @Profile("!weatherSensorEquipped")
 @Component
 public class MockSensors implements TemperatureSensor, BarometricPressureSensor {
+
+    private final String CACHE_KEY = "forecastio_data";
+    // this cache is intended mainly to act as a simple way to throttle access to the Forecastio API
+    private LoadingCache<String, FIODataPoint> data = CacheBuilder.newBuilder().maximumSize(3)
+            .expireAfterWrite(1, TimeUnit.MINUTES).build(
+                    new CacheLoader<String, FIODataPoint>() {
+                        public FIODataPoint load(String string) {
+                            return new FIOCurrently(forecastIO).get();
+                        }
+                    });
 
     @Value("${forecastio.apikey}")
     private String apikey;
@@ -37,17 +52,16 @@ public class MockSensors implements TemperatureSensor, BarometricPressureSensor 
 
     @Override
     public double readPressureAsInHg() {
-        return 29.68;
+        return data.getUnchecked(CACHE_KEY).pressure() * 0.0295301;
     }
 
+    @Override
     public double readTemperature() {
-        FIOCurrently currently = new FIOCurrently(forecastIO);
-        return currently.get().temperature();
+        return (readTemperatureFarenheit() - 32) * 5 / 9;
     }
 
     @Override
     public double readTemperatureFarenheit() {
-        FIOCurrently currently = new FIOCurrently(forecastIO);
-        return currently.get().temperature();
+        return data.getUnchecked(CACHE_KEY).temperature();
     }
 }
