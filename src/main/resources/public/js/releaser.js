@@ -159,7 +159,7 @@ app.controller('dataVisController', ["$scope", "dataService", function ($scope, 
             return d.sapQuantity;
         });
 
-        var _group = s.dailyDimension.group().reduceSum(function(d) {return 1;});
+        var _group = s.dateDimension.group().reduceSum(function(d) {return 1;});
 
         // this lets us do a cumulative gallons-per-tap graph
         s.cumulativePerTap = {
