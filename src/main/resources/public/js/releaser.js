@@ -144,7 +144,7 @@ app.controller('dataVisController', ["$scope", "dataService", function ($scope, 
         });
 
         s.temperatureDimension = s.ndx.dimension(function (d) {
-            return d.temperature;
+            return Math.round(d.temperature);
         });
 
         s.hourlyGroup = s.hourlyDimension.group().reduceSum(function (d) {
@@ -159,6 +159,20 @@ app.controller('dataVisController', ["$scope", "dataService", function ($scope, 
             return d.sapQuantity;
         });
 
+        var _group = s.dailyDimension.group().reduceSum(function(d) {return 1;});
+
+        // this lets us do a cumulative gallons-per-tap graph
+        s.cumulativePerTap = {
+            all:function () {
+             var cumulate = 0.0;
+             var g = [];
+             _group.all().forEach(function(d,i) {
+               cumulate += d.value/107;
+               g.push({key:d.key,value:cumulate})
+             });
+             return g;
+            }
+          };
 
         s.tableGroup = function (d) {
             var format = d3.format("02d");
