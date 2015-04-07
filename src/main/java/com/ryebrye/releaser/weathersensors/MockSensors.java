@@ -52,7 +52,12 @@ public class MockSensors implements TemperatureSensor, BarometricPressureSensor 
 
     @Override
     public double readPressureAsInHg() {
-        return data.getUnchecked(CACHE_KEY).pressure() * 0.0295301;
+        try {
+            return data.getUnchecked(CACHE_KEY).pressure() * 0.0295301;
+        }
+        catch(Exception e) {
+            return 29.4;
+        }
     }
 
     @Override
@@ -62,6 +67,10 @@ public class MockSensors implements TemperatureSensor, BarometricPressureSensor 
 
     @Override
     public double readTemperatureFarenheit() {
-        return data.getUnchecked(CACHE_KEY).temperature();
+        try {
+            return data.getUnchecked(CACHE_KEY).temperature();
+        } catch (Exception e) {
+            return 33.0;
+        }
     }
 }
