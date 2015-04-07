@@ -18,7 +18,7 @@ import java.io.IOException;
  * and re-used under the MIT license.
  *
  */
-@Profile("raspberryPi")
+@Profile("weatherSensorEquipped")
 @Component
 public class BMP180Sensor implements TemperatureSensor, BarometricPressureSensor {
     private static final Logger log = LoggerFactory.getLogger(BMP180Sensor.class);

@@ -41,6 +41,7 @@
             <div class="clearfix"></div>
         </div>
 
+
         <div id="temperatureChart"
              class="dc-chart"
              dc-chart="barChart"
@@ -51,7 +52,6 @@
              dc-group="temperatureGroup"
              dc-elastic-x="true"
              dc-elastic-y="true"
-             dc-round="(dc.round.floor)"
              dc-always-round="true"
              dc-post-setup-chart="adjustTickFormat"
              dc-x-axis-label="'Outdoor Temperature °F'"
@@ -60,9 +60,28 @@
              dc-round="(dc.round.floor)"
              dc-post-setup-chart="hourFormat">
             <a class="reset">reset</a>
-
             <div class="clearfix"></div>
         </div>
+
+        <div id="perTap"
+             class="dc-chart"
+             dc-chart="lineChart"
+             dc-margins="{top: 10, right: 50, bottom: 30, left: 40}"
+             dc-width="500"
+             dc-height="250"
+             dc-dimension="dailyDimension"
+             dc-group="cumulativePerTap"
+             dc-elastic-x="true"
+             dc-elastic-y="true"
+             dc-y-axis-label="'Gallons of Sap per tap'"
+             dc-x-axis-label="'Date'"
+             dc-x-units="d3.time.days"
+             dc-post-setup-chart="adjustTickFormat"
+             dc-x="d3.time.scale().domain([minDate, maxDate]).nice(d3.time.day)"
+             >
+            <a class="reset">reset</a>
+            <div class="clearfix"></div>
+            </div>
 
 
     </div>

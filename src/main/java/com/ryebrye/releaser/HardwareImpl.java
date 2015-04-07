@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class only runs when the "raspberryPi" profile is enabled - otherwise the application wont start because the
@@ -72,9 +73,15 @@ public class HardwareImpl {
             releaserManagement.broadcastHighSwitchStatus(event.getState().isHigh());
         });
 
+        // schedule setting the in setting the state based on the current value of the pins
+        // do this with some delay bewteen them to avoid race conditions
+        GpioFactory.getExecutorServiceFactory().getScheduledExecutorService().schedule(() -> {
+            releaserManagement.broadcastLowSwitchStatus(lowFloatSwitch.getState().isHigh());
+        }, 10, TimeUnit.MILLISECONDS);
+        GpioFactory.getExecutorServiceFactory().getScheduledExecutorService().schedule(() -> {
+            releaserManagement.broadcastLowSwitchStatus(highFloatSwitch.getState().isHigh());
+        }, 200, TimeUnit.MILLISECONDS);
         // send the initial broadcast out about the current state
-        releaserManagement.broadcastLowSwitchStatus(lowFloatSwitch.getState().isHigh());
-        releaserManagement.broadcastHighSwitchStatus(highFloatSwitch.getState().isHigh());
     }
 
     @Consume(uri = "seda:releaserHardwareControl")
@@ -88,7 +95,6 @@ public class HardwareImpl {
             log.info("Setting vacuum relay state to LOW (open) in response to control message");
             vacuumRelay.low();
         }
-
     }
 
 
