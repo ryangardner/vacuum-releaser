@@ -21,7 +21,7 @@ are available that you can use to send messages into the same message bus that t
 
 If you want do download a database with data from actual releaser events, you can download this file and place it in your home directory:
 
-[http://ryangardner.github.io/vacuum-releaser/releaserLiveDb.mv.db](releaserLiveDb.mv.db)
+[releaserLiveDb.mv.db](http://ryangardner.github.io/vacuum-releaser/releaserLiveDb.mv.db)
 
 To run locally, you can run the ```ReleaserApplication``` from inside your ide or by executing: ```mvn spring-boot:run``` from the command line.
 
