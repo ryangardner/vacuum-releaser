@@ -2,6 +2,7 @@ package com.ryebrye.releaser.storage;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Objects;
 
 /**
  * @author Ryan Gardner
@@ -48,6 +49,26 @@ public class StorageTank {
         return this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof StorageTank)) {
+            return false;
+        }
+        StorageTank that = (StorageTank) o;
+        return Double.compare(that.currentVolume, currentVolume) == 0 &&
+                Double.compare(that.capacity, capacity) == 0 &&
+                Double.compare(that.warningThreshold, warningThreshold) == 0 &&
+                Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, currentVolume, capacity, warningThreshold);
+    }
+
     public StorageTank removeSap(double volume) {
         this.currentVolume -= volume;
         return this;
@@ -62,40 +83,5 @@ public class StorageTank {
         return storageTank;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof StorageTank)) {
-            return false;
-        }
 
-        StorageTank that = (StorageTank) o;
-
-        if (Double.compare(that.capacity, capacity) != 0) {
-            return false;
-        }
-        if (Double.compare(that.currentVolume, currentVolume) != 0) {
-            return false;
-        }
-        if (Double.compare(that.warningThreshold, warningThreshold) != 0) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        temp = Double.doubleToLongBits(currentVolume);
-        result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(capacity);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(warningThreshold);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
-    }
 }
