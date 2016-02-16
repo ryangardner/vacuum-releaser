@@ -6,6 +6,8 @@ import com.github.dvdme.ForecastIOLib.ForecastIO;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -21,14 +23,17 @@ import java.util.concurrent.TimeUnit;
 @Profile("!weatherSensorEquipped")
 @Component
 public class MockSensors implements TemperatureSensor, BarometricPressureSensor {
+    private static final Logger log = LoggerFactory.getLogger(MockSensors.class);
 
     private final String CACHE_KEY = "forecastio_data";
     // this cache is intended mainly to act as a simple way to throttle access to the Forecastio API
     private LoadingCache<String, FIODataPoint> data = CacheBuilder.newBuilder().maximumSize(3)
             .expireAfterWrite(1, TimeUnit.MINUTES).build(
                     new CacheLoader<String, FIODataPoint>() {
+                        private final Logger log = LoggerFactory.getLogger(MockSensors.class);
                         public FIODataPoint load(String string) {
-                            return new FIOCurrently(forecastIO).get();
+                            log.info("loading weather data from forecast.io");
+                            return new FIOCurrently(forecastIO()).get();
                         }
                     });
 
@@ -41,11 +46,9 @@ public class MockSensors implements TemperatureSensor, BarometricPressureSensor 
     @Value("${forecastio.longitude}")
     private String longitude;
 
-    ForecastIO forecastIO;
 
-    @PostConstruct
-    private void initializeWeatherLib() {
-        forecastIO = new ForecastIO(lat, longitude, ForecastIO.UNITS_US, "en", apikey);
+    private ForecastIO forecastIO() {
+        return new ForecastIO(lat, longitude, ForecastIO.UNITS_US, "en", apikey);
     }
 
     ThreadLocalRandom tlr = ThreadLocalRandom.current();
