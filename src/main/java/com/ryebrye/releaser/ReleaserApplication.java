@@ -1,6 +1,5 @@
 package com.ryebrye.releaser;
 
-import org.h2.mvstore.MVStore;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.MessageSourceAutoConfiguration;
@@ -10,11 +9,8 @@ import org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoCo
 import org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.XADataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.mobile.SitePreferenceAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.reactor.ReactorAutoConfiguration;
-import org.springframework.boot.autoconfigure.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.social.FacebookAutoConfiguration;
 import org.springframework.boot.autoconfigure.social.LinkedInAutoConfiguration;
 import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
 import org.springframework.boot.autoconfigure.websocket.WebSocketAutoConfiguration;
@@ -46,11 +42,9 @@ import java.util.Arrays;
         VelocityAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         RabbitAutoConfiguration.class,
-        RedisAutoConfiguration.class,
         RepositoryRestMvcAutoConfiguration.class,
         SitePreferenceAutoConfiguration.class,
         MongoRepositoriesAutoConfiguration.class,
-        MongoDataAutoConfiguration.class,
         MessageSourceAutoConfiguration.class,
         LinkedInAutoConfiguration.class,
         ReactorAutoConfiguration.class,
