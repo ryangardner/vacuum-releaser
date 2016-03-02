@@ -20,8 +20,14 @@ public class ReleaserManagement {
     @EndpointInject(uri = "seda:lowSwitchStateChange")
     protected ProducerTemplate lowSwitchStateChange;
 
+    @EndpointInject(uri = "seda:moistureTrapSwitchChange")
+    protected ProducerTemplate moistureTrapSwitchChange;
+
     @EndpointInject(uri = "seda:releaserControl")
     ProducerTemplate emptyReleaser;
+
+    @EndpointInject(uri = "seda:releaserVacuumPumpControl")
+    ProducerTemplate controlPump;
 
     @ManagedOperation(description = "set the high switch status")
     public void broadcastHighSwitchStatus(boolean status) {
@@ -37,6 +43,17 @@ public class ReleaserManagement {
     public void setReleaserOpenState(boolean state) {
        emptyReleaser.sendBody(state ? "open" : "close");
     }
+
+    @ManagedOperation(description = "set the high switch status")
+    public void broadcastMoistureTrapSwitchChange(boolean status) {
+        moistureTrapSwitchChange.sendBody(status);
+    }
+
+    @ManagedOperation(description = "set the state of power to the vacuum pump")
+    public void broadcastPumpState(boolean state) {
+        controlPump.sendBody(state ? "on" : "off");
+    }
+
 
 
 

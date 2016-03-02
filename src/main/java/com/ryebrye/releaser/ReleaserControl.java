@@ -37,8 +37,11 @@ public class ReleaserControl {
     @EndpointInject(uri = "seda:releaserControl")
     ProducerTemplate emptyReleaser;
 
+    @EndpointInject(uri = "seda:moistureTrapFull")
+    ProducerTemplate moistureTrapFull;
+
     private enum ReleaserState {
-        Filling, Full, Emptying, Empty
+        Filling, Full, Emptying, Empty, Error
     }
 
     private ScheduledThreadPoolExecutor cooldownExecutor = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNameFormat("releaser-control-%d").build());
@@ -82,6 +85,8 @@ public class ReleaserControl {
         releaserStateConfig.configure(ReleaserState.Empty)
                 .onEntry(this::handleEmptyReleaser)
                 .permit(ReleaserTrigger.SapAboveLowPoint, ReleaserState.Filling);
+
+
         return releaserStateConfig;
     }
 
@@ -131,6 +136,16 @@ public class ReleaserControl {
             } else {
                 log.error("Sap below high point is not a valid trigger for the state of {}", releaser.getState().name());
             }
+        }
+    }
+
+    @Consume(uri = "seda:moistureTrapSwitchChange")
+    public void handleMoistureTrapFloatSwitchChange(boolean moistureTrapState) {
+        if (moistureTrapState) {
+            moistureTrapFull.sendBody("full");
+        }
+        else {
+            moistureTrapFull.sendBody("notFull");
         }
     }
 

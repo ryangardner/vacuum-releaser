@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
+import java.time.Instant
 import java.time.LocalDate
 import java.time.ZonedDateTime
 
@@ -81,7 +82,7 @@ class ReleaserRoutes extends RouteBuilder {
         }.to("seda:processCompletedEvent")
 
         from("seda:processCompletedEvent")
-        .process { Exchange it ->
+                .process { Exchange it ->
             it.in.headers.put('lastEvent', releaserEventRepository.findMostRecentCompletedEvent() != null ? releaserEventRepository.findMostRecentCompletedEvent() : it.in.body)
         }
         .multicast().to("seda:saveReleaserEvent", "seda:tweetAboutIt", "seda:incrementSapInTank")
@@ -92,6 +93,28 @@ class ReleaserRoutes extends RouteBuilder {
             tank.addSap((it.in.body as ReleaserEvent).sapQuantity)
             storageTankRepository.saveAndFlush(tank);
         })
+
+        from("seda:moistureTrapFull")
+                .choice()
+                .when(body().isEqualTo("full"))
+                .to("direct:shutdownPump")
+                .otherwise()
+                .to("direct:startPump")
+                .endChoice()
+
+        from("direct:shutdownPump")
+                .transform({ Exchange it -> "off" }).to("seda:releaserVacuumPumpControl").end()
+                .to("seda:notifyAboutFailure")
+
+        from("direct:startPump")
+                .transform({ Exchange it -> "off" }).to("seda:releaserVacuumPumpControl").end()
+
+        from("seda:notifyAboutFailure").routeId("uhOh")
+                .transform({ Exchange it ->
+            "Oh crap. The moisture trap is filling up as of " + Instant.now() as String
+        }).to("twitter://directmessage?user=ryebrye")
+
+
 
 
         from("seda:tweetAboutIt").routeId("tweet")
